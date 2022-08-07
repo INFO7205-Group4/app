@@ -5,8 +5,8 @@ import javax.persistence.*;
 
 import java.sql.Timestamp;
 
-@Entity
-@Table(name="Task")
+//@Entity
+//@Table(name="Task")
 public class Task {
 
     @Id

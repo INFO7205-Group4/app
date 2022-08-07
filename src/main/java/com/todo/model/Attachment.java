@@ -4,19 +4,21 @@ import javax.persistence.*;
 
 import java.sql.Timestamp;
 
-@Entity
-@Table(name="Attachment")
+//@Entity
+//@Table(name="Attachment")
 public class Attachment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private String attachment_Id;
+    private Integer attachment_Id;
 
     private String attachment_Name;
 
-    private Timestamp attached_AtTime;
+    @Column(name = "attached_at_time", nullable = true, unique = false)
+    private Timestamp attached_at_time;
 
     private short Attachment_Size;
+
 
     @Lob
     @Column(name="Attachment_File")
@@ -26,11 +28,11 @@ public class Attachment {
 
     }
 
-    public String getAttachment_Id() {
+    public Integer getAttachment_Id() {
         return attachment_Id;
     }
 
-    public void setAttachment_Id(String attachment_Id) {
+    public void setAttachment_Id(Integer attachment_Id) {
         this.attachment_Id = attachment_Id;
     }
 
@@ -43,11 +45,11 @@ public class Attachment {
     }
 
     public Timestamp getAttached_AtTime() {
-        return attached_AtTime;
+        return attached_at_time;
     }
 
     public void setAttached_AtTime(Timestamp attached_AtTime) {
-        this.attached_AtTime = attached_AtTime;
+        this.attached_at_time = attached_AtTime;
     }
 
     public short getAttachment_Size() {

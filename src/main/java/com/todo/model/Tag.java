@@ -4,8 +4,8 @@ import javax.persistence.*;
 
 import java.sql.Timestamp;
 
-@Entity
-@Table(name="Tag")
+//@Entity
+//@Table(name="Tag")
 public class Tag {
 
     @Id

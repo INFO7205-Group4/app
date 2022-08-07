@@ -7,12 +7,14 @@ import javax.persistence.*;
 import java.sql.Timestamp;
 
 @Entity
-@Table(name="users")
+@Table(name="Users")
 public class Users {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private String userId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    //@Column(name = "user_id")
+    private Integer userId;
+    //@Column(name = "f_name")
     private String fName;
     private String mName;
     private String lName;
@@ -20,7 +22,9 @@ public class Users {
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String userPassword;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Boolean emailValidated;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Timestamp emailSentTime;
     private Timestamp created_AtTime;
     private Timestamp updated_AtTime;
@@ -28,11 +32,11 @@ public class Users {
     public Users() {
     }
 
-    public String getUserId() {
+    public Integer getUserId() {
         return userId;
     }
 
-    public void setUserId(String userId) {
+    public void setUserId(Integer userId) {
         this.userId = userId;
     }
 
@@ -108,46 +112,50 @@ public class Users {
         this.updated_AtTime = updated_AtTime;
     }
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((fName == null) ? 0 : fName.hashCode());
-        result = prime * result + ((userId == null) ? 0 : userId.hashCode());
-        result = prime * result + ((emailAddress == null) ? 0 : emailAddress.hashCode());
-       // long temp;
-       // temp = Double.doubleToLongBits(salary);
-       // result = prime * result + (int) (temp ^ (temp >>> 32));
-        result = result = prime * result;
-        return result;
-    }
+//    @Override
+//    public int hashCode() {
+//        final int prime = 31;
+//        int result = 1;
+//        result = prime * result + ((fName == null) ? 0 : fName.hashCode());
+//        result = prime * result + ((userId == null) ? 0 : userId.hashCode());
+//        result = prime * result + ((emailAddress == null) ? 0 : emailAddress.hashCode());
+//       // long temp;
+//       // temp = Double.doubleToLongBits(salary);
+//       // result = prime * result + (int) (temp ^ (temp >>> 32));
+//        result = result = prime * result;
+//        return result;
+//    }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        Users other = (Users) obj;
-        if (emailAddress == null) {
-            if (other.emailAddress != null)
-                return false;
-        } else if (!emailAddress.equals(other.emailAddress))
-            return false;
-        if (userId == null) {
-            if (other.userId != null)
-                return false;
-        } else if (!userId.equals(other.userId))
-            return false;
-        if (fName == null) {
-            if (other.fName != null)
-                return false;
-        } else if (!fName.equals(other.fName))
-            return false;
-//        if (Double.doubleToLongBits(salary) != Double.doubleToLongBits(other.salary))
+//    @Override
+//    public boolean equals(Object obj) {
+//        if (this == obj)
+//            return true;
+//        if (obj == null)
 //            return false;
-        return true;
-    }
+//        if (getClass() != obj.getClass())
+//            return false;
+//        Users other = (Users) obj;
+//        if (emailAddress == null) {
+//            if (other.emailAddress != null)
+//                return false;
+//        } else if (!emailAddress.equals(other.emailAddress))
+//            return false;
+////        if (user_Id == null) {
+////            if (other.user_Id != null)
+////                return false;
+////        } else if (!user_Id.equals(other.user_Id))
+////            return false;
+//        if (fName == null) {
+//            if (other.fName != null)
+//                return false;
+//        } else if (!fName.equals(other.fName))
+//            return false;
+////        if (Double.doubleToLongBits(salary) != Double.doubleToLongBits(other.salary))
+////            return false;
+//        return true;
+//    }
+
+//    public Users orElseThrow(Object o) {
+//        return
+//    }
 }
