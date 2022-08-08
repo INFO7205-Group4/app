@@ -18,22 +18,10 @@ public class UserController {
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
-    // get users
-
-    // @RequestMapping(value="/users",method=RequestMethod.GET,produces="application/json")
-
-    // public ResponseEntity<Users> getUser(Authentication authentication) {
-    // Users users = userRepository.findByEmailAddress(authentication.getName());
-    // if (users == null) {
-    // return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-    // } else {
-    // return ResponseEntity.ok(users);
-    // }
-    // }
-
     @RequestMapping(value = "/register", method = RequestMethod.POST, produces = "application/json")
     public ResponseEntity<User> registerUser(@RequestBody User newUser) {
         try {
+            System.out.println(newUser.getEmailAddress());
             boolean status = User.registerUser(newUser);
             if (status) {
                 return new ResponseEntity<User>(newUser, HttpStatus.CREATED);
