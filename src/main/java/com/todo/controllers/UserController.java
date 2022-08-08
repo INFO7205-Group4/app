@@ -18,6 +18,7 @@ public class UserController {
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
+    // Register a user
     @RequestMapping(value = "/register", method = RequestMethod.POST, produces = "application/json")
     public ResponseEntity<User> registerUser(@RequestBody User newUser) {
         try {
@@ -29,6 +30,23 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         } catch (Exception e) {
             logger.info("**********Exception while creating New User**********");
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+    }
+
+    // Get a particular users
+
+    @RequestMapping(value = "/users", method = RequestMethod.GET, produces = "application/json")
+    public ResponseEntity<User> getAUser(@RequestParam String email) {
+        try {
+            User completeUserDetails = User.getUserDetails(email);
+            if (completeUserDetails != null) {
+                return new ResponseEntity<User>(completeUserDetails, HttpStatus.OK);
+            }
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        } catch (Exception e) {
+            logger.info("**********Exception while retrieving user's details **********");
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }

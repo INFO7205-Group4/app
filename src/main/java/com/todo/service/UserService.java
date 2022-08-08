@@ -66,6 +66,21 @@ public class UserService implements UserInterface {
     }
 
     @Override
+    public User getUserDetails(String email) {
+        try {
+            User getUser = userRepository.findByEmailAddress(email);
+            if (getUser != null) {
+                return getUser;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        return null;
+    }
+
+    @Override
     public boolean validateEmailLink(String email) {
         try {
             List<User> users = userRepository.findAll();
