@@ -69,6 +69,32 @@ public class UserController {
 
     }
 
+    @DeleteMapping
+    public ResponseEntity<Users> deleteUser(String email) {
+        Users users = userRepository.findByEmailAddress(email);
+        if (users != null) {
+            userRepository.deleteById(users.getUserId());
+            logger.info("**********User account deleted successfully ! **********");
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+        }
+        return null;
+    }
+
+    // @PutMapping
+    // public ResponseEntity<Users> updateUser(Authentication authentication,
+    // @RequestBody Users user) {
+    // Users users = userRepository.findByEmailAddress(authentication.getName());
+    // if (users != null) {
+    // users.setfName(user.getfName());
+    // users.setmName(user.getmName());
+    // users.setlName(user.getlName());
+    // users.setEmailAddress(user.getEmailAddress());
+    // userRepository.save(users);
+    // logger.info("**********User updated successfully ! **********");
+    // return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+    // }
+    // return null;
+    // }
     public boolean isValidEmailAddress(String email) {
         String ePattern = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$";
         java.util.regex.Pattern p = java.util.regex.Pattern.compile(ePattern);
