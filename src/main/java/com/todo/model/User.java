@@ -8,13 +8,11 @@ import java.sql.Timestamp;
 
 @Entity
 @Table(name = "Users")
-public class Users {
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    // @Column(name = "user_id")
     private Integer userId;
-    // @Column(name = "f_name")
     private String fName;
     private String mName;
     private String lName;
@@ -29,7 +27,7 @@ public class Users {
     private Timestamp created_AtTime;
     private Timestamp updated_AtTime;
 
-    public Users() {
+    public User() {
     }
 
     public Integer getUserId() {
@@ -92,8 +90,8 @@ public class Users {
         return emailSentTime;
     }
 
-    public void setEmailSentTime(Timestamp emailSentTime) {
-        this.emailSentTime = emailSentTime;
+    public void setEmailSentTime(Timestamp timestamp) {
+        this.emailSentTime = timestamp;
     }
 
     public Timestamp getCreated_AtTime() {
@@ -111,53 +109,4 @@ public class Users {
     public void setUpdated_AtTime(Timestamp updated_AtTime) {
         this.updated_AtTime = updated_AtTime;
     }
-
-    // @Override
-    // public int hashCode() {
-    // final int prime = 31;
-    // int result = 1;
-    // result = prime * result + ((fName == null) ? 0 : fName.hashCode());
-    // result = prime * result + ((userId == null) ? 0 : userId.hashCode());
-    // result = prime * result + ((emailAddress == null) ? 0 :
-    // emailAddress.hashCode());
-    // // long temp;
-    // // temp = Double.doubleToLongBits(salary);
-    // // result = prime * result + (int) (temp ^ (temp >>> 32));
-    // result = result = prime * result;
-    // return result;
-    // }
-
-    // @Override
-    // public boolean equals(Object obj) {
-    // if (this == obj)
-    // return true;
-    // if (obj == null)
-    // return false;
-    // if (getClass() != obj.getClass())
-    // return false;
-    // Users other = (Users) obj;
-    // if (emailAddress == null) {
-    // if (other.emailAddress != null)
-    // return false;
-    // } else if (!emailAddress.equals(other.emailAddress))
-    // return false;
-    //// if (user_Id == null) {
-    //// if (other.user_Id != null)
-    //// return false;
-    //// } else if (!user_Id.equals(other.user_Id))
-    //// return false;
-    // if (fName == null) {
-    // if (other.fName != null)
-    // return false;
-    // } else if (!fName.equals(other.fName))
-    // return false;
-    //// if (Double.doubleToLongBits(salary) !=
-    // Double.doubleToLongBits(other.salary))
-    //// return false;
-    // return true;
-    // }
-
-    // public Users orElseThrow(Object o) {
-    // return
-    // }
 }
