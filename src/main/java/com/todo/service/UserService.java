@@ -139,6 +139,36 @@ public class UserService implements UserInterface {
         return null;
     }
 
+    public boolean updateUser(String loggedInUser, User user) {
+        try {
+            User getUser = userRepository.findByEmailAddress(loggedInUser);
+            BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+            if (getUser != null) {
+                getUser.setfName(user.getfName() != null && !user.getfName().isEmpty() && !user.getfName().isBlank()
+                        ? user.getfName()
+                        : getUser.getfName());
+                getUser.setmName(user.getmName() != null && !user.getmName().isEmpty() && !user.getmName().isBlank()
+                        ? user.getmName()
+                        : getUser.getmName());
+                getUser.setlName(user.getlName() != null && !user.getlName().isEmpty() && !user.getlName().isBlank()
+                        ? user.getlName()
+                        : getUser.getlName());
+                getUser.setUserPassword(user.getUserPassword() != null && !user.getUserPassword().isEmpty()
+                        && !user.getUserPassword().isBlank()
+                                ? bCryptPasswordEncoder.encode(user.getUserPassword())
+                                : getUser.getUserPassword());
+                getUser.setUpdated_AtTime(new Timestamp(System.currentTimeMillis()));
+                userRepository.save(getUser);
+                return true;
+            }
+            return false;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+
+        }
+    }
+
     private boolean isValidEmailAddress(String email) {
         String regex = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$";
         java.util.regex.Pattern p = java.util.regex.Pattern.compile(regex);

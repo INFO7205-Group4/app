@@ -107,9 +107,10 @@ public class UserController {
 
     @NeedLogin
     @RequestMapping(value = "/updateUser", method = RequestMethod.PATCH, produces = "application/json")
-    public ResponseEntity<String> updateUser(HttpServletRequest request) {
+    public ResponseEntity<String> updateUser(HttpServletRequest request, @RequestBody User updatedUser) {
         try {
             String loggedInUser = AuthService.getUserName(request);
+            boolean status = User.updateUser(loggedInUser, updatedUser);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         } catch (Exception e) {
             logger.info("**********Exception while retrieving user's details **********");

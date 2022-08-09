@@ -12,4 +12,6 @@ public interface UserInterface {
     boolean deleteUser(String email);
 
     User getUserDetails(String email);
+
+    boolean updateUser(String loggedInUser, User user);
 }
