@@ -124,6 +124,21 @@ public class UserService implements UserInterface {
         }
     }
 
+    @Override
+    public User getUserDetails(String email) {
+        try {
+            User getUser = userRepository.findByEmailAddress(email);
+            if (getUser != null) {
+                return getUser;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+        logger.info("**********User does not exist **********");
+        return null;
+    }
+
     private boolean isValidEmailAddress(String email) {
         String regex = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$";
         java.util.regex.Pattern p = java.util.regex.Pattern.compile(regex);

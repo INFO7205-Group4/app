@@ -82,4 +82,19 @@ public class UserController {
         }
     }
 
+    @RequestMapping(value = "/user", method = RequestMethod.GET, produces = "application/json")
+    public ResponseEntity<User> getUser(@RequestParam String email) {
+        try {
+            User userDetails = User.getUserDetails(email);
+            if (userDetails != null) {
+                return new ResponseEntity<User>(userDetails, HttpStatus.OK);
+            }
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        } catch (Exception e) {
+            logger.info("**********Exception while retrieving user's details **********");
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+
+    }
 }
