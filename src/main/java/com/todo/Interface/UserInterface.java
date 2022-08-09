@@ -8,4 +8,6 @@ public interface UserInterface {
     boolean validateEmailLink(String email);
 
     boolean resendValidationEmail(String email);
+
+    boolean deleteUser(String email);
 }

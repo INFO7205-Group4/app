@@ -65,4 +65,21 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
     }
+
+    @NeedLogin
+    @RequestMapping(value = "/deleteUser", method = RequestMethod.DELETE, produces = "application/json")
+    public ResponseEntity<User> deleteUser(@RequestParam String email) {
+        try {
+            boolean status = User.deleteUser(email);
+            if (status) {
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+            }
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        } catch (Exception e) {
+            logger.info("**********Exception while deleting user**********");
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+    }
+
 }

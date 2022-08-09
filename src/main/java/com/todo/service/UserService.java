@@ -54,11 +54,13 @@ public class UserService implements UserInterface {
             boolean status = sendEmail(newUser.getEmailAddress());
             if (status) {
                 userRepository.save(newUser);
+                logger.info("**********User registered successfully **********");
                 return true;
             }
             return false;
         } catch (MessagingException | IOException e) {
             e.printStackTrace();
+            logger.info("**********Exception while registering the user ! **********");
             return false;
         }
     }
@@ -66,15 +68,15 @@ public class UserService implements UserInterface {
     @Override
     public boolean validateEmailLink(String email) {
         try {
-            List<User> users = userRepository.findAll();
-            for (User user : users) {
-                if (email.equals(user.getEmailAddress()) && !user.getEmailValidated()) {
-                    user.setEmailValidated(true);
-                    user.setUpdated_AtTime(new Timestamp(System.currentTimeMillis()));
-                    userRepository.save(user);
-                    return true;
-                }
+            User user = userRepository.findByEmailAddress(email);
+            if (user != null && email.equals(user.getEmailAddress()) && !user.getEmailValidated()) {
+
+                user.setEmailValidated(true);
+                user.setUpdated_AtTime(new Timestamp(System.currentTimeMillis()));
+                userRepository.save(user);
+                return true;
             }
+            logger.info("**********User does not exist or email address is already validated **********");
             return false;
         } catch (Exception e) {
             logger.info("**********Exception while validating email **********");
@@ -87,19 +89,36 @@ public class UserService implements UserInterface {
     @Override
     public boolean resendValidationEmail(String email) {
         try {
-            List<User> users = userRepository.findAll();
-            for (User user : users) {
-                if (email.equals(user.getEmailAddress()) && !user.getEmailValidated()
-                        && user.getEmailSentTime().getTime() + 900000 <= System.currentTimeMillis()) {
-                    user.setEmailValidated(false);
-                    user.setUpdated_AtTime(new Timestamp(System.currentTimeMillis()));
-                    user.setEmailSentTime(new Timestamp(System.currentTimeMillis()));
-                    userRepository.save(user);
-                    return true;
-                }
+            User user = userRepository.findByEmailAddress(email);
+            if (user != null && email.equals(user.getEmailAddress()) && !user.getEmailValidated()
+                    && user.getEmailSentTime().getTime() + 900000 <= System.currentTimeMillis()) {
+                user.setEmailValidated(false);
+                user.setUpdated_AtTime(new Timestamp(System.currentTimeMillis()));
+                user.setEmailSentTime(new Timestamp(System.currentTimeMillis()));
+                userRepository.save(user);
+                return true;
             }
+            logger.info(
+                    "**********User does not exist or email address is already validated or 15 mins have not elapsed **********");
             return false;
         } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public boolean deleteUser(String email) {
+        try {
+            User user = userRepository.findByEmailAddress(email);
+            if (user != null) {
+                userRepository.delete(user);
+                return true;
+            }
+            logger.info("**********User you are trying to delete does not exist **********");
+            return false;
+        } catch (Exception e) {
+            logger.info("**********Exception while deleting user **********");
             e.printStackTrace();
             return false;
         }
