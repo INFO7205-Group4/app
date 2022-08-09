@@ -39,12 +39,10 @@ public class UserService implements UserInterface {
         if (!validationStatus) {
             return false;
         }
-        List<User> users = userRepository.findAll();
-        for (User user : users) {
-            if (newUser.getEmailAddress().equals(user.getEmailAddress())) {
-                logger.info("**********User account already exists with this email ! **********");
-                return false;
-            }
+        User user = userRepository.findByEmailAddress(newUser.getEmailAddress());
+        if (user != null) {
+            logger.info("**********User account already exists with this email ! **********");
+            return false;
         }
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
         newUser.setUserPassword(bCryptPasswordEncoder.encode(newUser.getUserPassword()));
