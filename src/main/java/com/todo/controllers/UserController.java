@@ -1,8 +1,12 @@
 package com.todo.controllers;
 
+import com.todo.Interface.AuthServiceInterface;
 import com.todo.Interface.NeedLogin;
 import com.todo.Interface.UserInterface;
 import com.todo.model.User;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +20,8 @@ public class UserController {
 
     @Autowired
     UserInterface User;
+    @Autowired
+    AuthServiceInterface AuthService;
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
@@ -82,6 +88,7 @@ public class UserController {
         }
     }
 
+    @NeedLogin
     @RequestMapping(value = "/user", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<User> getUser(@RequestParam String email) {
         try {
@@ -97,4 +104,19 @@ public class UserController {
         }
 
     }
+
+    @NeedLogin
+    @RequestMapping(value = "/updateUser", method = RequestMethod.PATCH, produces = "application/json")
+    public ResponseEntity<String> updateUser(HttpServletRequest request) {
+        try {
+            String loggedInUser = AuthService.getUserName(request);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        } catch (Exception e) {
+            logger.info("**********Exception while retrieving user's details **********");
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+
+    }
+
 }

@@ -10,4 +10,6 @@ public interface UserInterface {
     boolean resendValidationEmail(String email);
 
     boolean deleteUser(String email);
+
+    User getUserDetails(String email);
 }
