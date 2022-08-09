@@ -1,5 +1,6 @@
 package com.todo.controllers;
 
+import com.todo.Interface.NeedLogin;
 import com.todo.Interface.UserInterface;
 import com.todo.model.User;
 import org.slf4j.Logger;
@@ -33,6 +34,7 @@ public class UserController {
         }
     }
 
+    @NeedLogin
     @RequestMapping(value = "/validateEmail", method = RequestMethod.POST, produces = "application/json")
     public ResponseEntity<User> validateEmail(@RequestParam String email) {
         try {
@@ -48,6 +50,7 @@ public class UserController {
         }
     }
 
+    @NeedLogin
     @RequestMapping(value = "/resendLink", method = RequestMethod.POST, produces = "application/json")
     public ResponseEntity<User> resendValidationLink(@RequestParam String email) {
         try {
@@ -57,10 +60,9 @@ public class UserController {
             }
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         } catch (Exception e) {
-            logger.info("**********Exception while resending validation link **********");
+            logger.info("**********Exception while resending validation link**********");
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
     }
-
 }
