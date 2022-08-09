@@ -21,7 +21,7 @@ public class SecurityInterceptor extends HandlerInterceptorAdapter {
 
     private final Logger log = LogManager.getLogger(getClass());
 
-    private static final String AUTH_HEADER_PARAMETER_AUTHERIZATION = "authorization";
+    private static final String AUTH_HEADER_PARAMETER_AUTHORIZATION = "authorization";
 
     // Get application user name from props.
     @Value("${app.api.basic.username}")
@@ -54,7 +54,7 @@ public class SecurityInterceptor extends HandlerInterceptorAdapter {
                 try {
 
                     // Grab basic header value from request header object.
-                    String basicAuthHeaderValue = request.getHeader(AUTH_HEADER_PARAMETER_AUTHERIZATION);
+                    String basicAuthHeaderValue = request.getHeader(AUTH_HEADER_PARAMETER_AUTHORIZATION);
 
                     // Process basic authentication
                     isValidBasicAuthRequest = authService.validateBasicAuthentication(basicAuthHeaderValue);
