@@ -14,4 +14,8 @@ public interface UserInterface {
     User getUserDetails(String email);
 
     boolean updateUser(String loggedInUser, User user);
+
+    boolean sendUpdatedEmailVerificationLink(String oldLink, String newLink);
+
+    boolean updateVerificationEmailAddress(String oldLink, String newLink);
 }

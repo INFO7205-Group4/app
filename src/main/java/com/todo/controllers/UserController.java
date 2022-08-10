@@ -40,7 +40,6 @@ public class UserController {
         }
     }
 
-    @NeedLogin
     @RequestMapping(value = "/validateEmail", method = RequestMethod.POST, produces = "application/json")
     public ResponseEntity<User> validateEmail(@RequestParam String email) {
         try {
@@ -57,10 +56,11 @@ public class UserController {
     }
 
     @NeedLogin
-    @RequestMapping(value = "/resendLink", method = RequestMethod.POST, produces = "application/json")
-    public ResponseEntity<User> resendValidationLink(@RequestParam String email) {
+    @RequestMapping(value = "/resendLink", method = RequestMethod.GET, produces = "application/json")
+    public ResponseEntity<User> resendValidationLink(HttpServletRequest request) {
         try {
-            boolean status = User.resendValidationEmail(email);
+            String loggedInUser = AuthService.getUserName(request);
+            boolean status = User.resendValidationEmail(loggedInUser);
             if (status) {
                 return ResponseEntity.status(HttpStatus.OK).body(null);
             }
@@ -74,8 +74,9 @@ public class UserController {
 
     @NeedLogin
     @RequestMapping(value = "/deleteUser", method = RequestMethod.DELETE, produces = "application/json")
-    public ResponseEntity<User> deleteUser(@RequestParam String email) {
+    public ResponseEntity<User> deleteUser(HttpServletRequest request) {
         try {
+            String email = AuthService.getUserName(request);
             boolean status = User.deleteUser(email);
             if (status) {
                 return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
@@ -90,9 +91,10 @@ public class UserController {
 
     @NeedLogin
     @RequestMapping(value = "/user", method = RequestMethod.GET, produces = "application/json")
-    public ResponseEntity<User> getUser(@RequestParam String email) {
+    public ResponseEntity<User> getUser(HttpServletRequest request) {
         try {
-            User userDetails = User.getUserDetails(email);
+            String loggedInUser = AuthService.getUserName(request);
+            User userDetails = User.getUserDetails(loggedInUser);
             if (userDetails != null) {
                 return new ResponseEntity<User>(userDetails, HttpStatus.OK);
             }
@@ -111,6 +113,9 @@ public class UserController {
         try {
             String loggedInUser = AuthService.getUserName(request);
             boolean status = User.updateUser(loggedInUser, updatedUser);
+            if (status) {
+                return ResponseEntity.status(HttpStatus.OK).body(null);
+            }
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         } catch (Exception e) {
             logger.info("**********Exception while retrieving user's details **********");
@@ -120,4 +125,34 @@ public class UserController {
 
     }
 
+    @RequestMapping(value = "/confirmationLink", method = RequestMethod.POST, produces = "application/json")
+    public ResponseEntity<User> confirmUpdateEmailAddress(@RequestParam String oldLink, @RequestParam String newLink) {
+        try {
+            boolean status = User.sendUpdatedEmailVerificationLink(oldLink, newLink);
+            if (status) {
+                return ResponseEntity.status(HttpStatus.OK).body(null);
+            }
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        } catch (Exception e) {
+            logger.info("**********Exception while validating email **********");
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+    }
+
+    @RequestMapping(value = "/updateEmail", method = RequestMethod.POST, produces = "application/json")
+    public ResponseEntity<User> validateUpdatedEmailAddress(@RequestParam String oldLink,
+            @RequestParam String newLink) {
+        try {
+            boolean status = User.updateVerificationEmailAddress(oldLink, newLink);
+            if (status) {
+                return ResponseEntity.status(HttpStatus.OK).body(null);
+            }
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        } catch (Exception e) {
+            logger.info("**********Exception while validating email **********");
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+    }
 }

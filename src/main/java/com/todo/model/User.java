@@ -26,6 +26,15 @@ public class User {
     private Timestamp emailSentTime;
     private Timestamp created_AtTime;
     private Timestamp updated_AtTime;
+    private Boolean confirmationEmailValidated;
+
+    public Boolean getConfirmationEmailValidated() {
+        return confirmationEmailValidated;
+    }
+
+    public void setConfirmationEmailValidated(Boolean confirmationEmailValidated) {
+        this.confirmationEmailValidated = confirmationEmailValidated;
+    }
 
     public User() {
     }

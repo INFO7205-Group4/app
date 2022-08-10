@@ -2,9 +2,11 @@ package com.todo.service;
 
 import java.io.IOException;
 import java.sql.Timestamp;
+import java.util.Base64;
 import java.util.List;
 import java.util.Properties;
 
+import javax.crypto.Cipher;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
@@ -51,7 +53,9 @@ public class UserService implements UserInterface {
         newUser.setCreated_AtTime(new Timestamp(System.currentTimeMillis()));
         newUser.setUpdated_AtTime(new Timestamp(System.currentTimeMillis()));
         try {
-            boolean status = sendEmail(newUser.getEmailAddress());
+            String email = encryptEmailAddress(newUser.getEmailAddress());
+            String url = "http://localhost:8081/v1/validateEmail?email=" + email;
+            boolean status = sendEmail(url, newUser.getEmailAddress());
             if (status) {
                 userRepository.save(newUser);
                 logger.info("**********User registered successfully **********");
@@ -68,6 +72,7 @@ public class UserService implements UserInterface {
     @Override
     public boolean validateEmailLink(String email) {
         try {
+            email = decryptEmailAddress(email);
             User user = userRepository.findByEmailAddress(email);
             if (user != null && email.equals(user.getEmailAddress()) && !user.getEmailValidated()) {
 
@@ -95,8 +100,14 @@ public class UserService implements UserInterface {
                 user.setEmailValidated(false);
                 user.setUpdated_AtTime(new Timestamp(System.currentTimeMillis()));
                 user.setEmailSentTime(new Timestamp(System.currentTimeMillis()));
-                userRepository.save(user);
-                return true;
+                email = encryptEmailAddress(email);
+                String url = "http://localhost:8081/v1/validateEmail?email=" + email;
+                boolean status = sendEmail(url, user.getEmailAddress());
+                if (status) {
+                    userRepository.save(user);
+                    return true;
+                }
+                return false;
             }
             logger.info(
                     "**********User does not exist or email address is already validated or 15 mins have not elapsed **********");
@@ -139,26 +150,43 @@ public class UserService implements UserInterface {
         return null;
     }
 
+    @Override
     public boolean updateUser(String loggedInUser, User user) {
         try {
-            User getUser = userRepository.findByEmailAddress(loggedInUser);
+            User existingUser = userRepository.findByEmailAddress(loggedInUser);
             BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
-            if (getUser != null) {
-                getUser.setfName(user.getfName() != null && !user.getfName().isEmpty() && !user.getfName().isBlank()
-                        ? user.getfName()
-                        : getUser.getfName());
-                getUser.setmName(user.getmName() != null && !user.getmName().isEmpty() && !user.getmName().isBlank()
-                        ? user.getmName()
-                        : getUser.getmName());
-                getUser.setlName(user.getlName() != null && !user.getlName().isEmpty() && !user.getlName().isBlank()
-                        ? user.getlName()
-                        : getUser.getlName());
-                getUser.setUserPassword(user.getUserPassword() != null && !user.getUserPassword().isEmpty()
+            if (existingUser != null) {
+                existingUser
+                        .setfName(user.getfName() != null && !user.getfName().isEmpty() && !user.getfName().isBlank()
+                                ? user.getfName()
+                                : existingUser.getfName());
+                existingUser
+                        .setmName(user.getmName() != null && !user.getmName().isEmpty() && !user.getmName().isBlank()
+                                ? user.getmName()
+                                : existingUser.getmName());
+                existingUser
+                        .setlName(user.getlName() != null && !user.getlName().isEmpty() && !user.getlName().isBlank()
+                                ? user.getlName()
+                                : existingUser.getlName());
+                existingUser.setUserPassword(user.getUserPassword() != null && !user.getUserPassword().isEmpty()
                         && !user.getUserPassword().isBlank()
                                 ? bCryptPasswordEncoder.encode(user.getUserPassword())
-                                : getUser.getUserPassword());
-                getUser.setUpdated_AtTime(new Timestamp(System.currentTimeMillis()));
-                userRepository.save(getUser);
+                                : existingUser.getUserPassword());
+                existingUser.setUpdated_AtTime(new Timestamp(System.currentTimeMillis()));
+                if (user.getEmailAddress() != null && user.getEmailAddress() != existingUser.getEmailAddress()) {
+                    String oldEmailAddress = encryptEmailAddress(existingUser.getEmailAddress());
+                    String newEmailAddress = encryptEmailAddress(user.getEmailAddress());
+                    String url = "http://localhost:8081/v1/confirmationLink?oldLink=" + oldEmailAddress + "&newLink="
+                            + newEmailAddress;
+                    boolean status = sendEmail(url, existingUser.getEmailAddress());
+                    if (status) {
+                        userRepository.save(existingUser);
+                        return true;
+                    }
+                    return false;
+                }
+
+                userRepository.save(existingUser);
                 return true;
             }
             return false;
@@ -166,6 +194,64 @@ public class UserService implements UserInterface {
             e.printStackTrace();
             return false;
 
+        }
+    }
+
+    @Override
+    public boolean sendUpdatedEmailVerificationLink(String oldLink, String newLink) {
+        try {
+            String oldEmailAddress = decryptEmailAddress(oldLink);
+            String newEmailAddress = decryptEmailAddress(newLink);
+            User user = userRepository.findByEmailAddress(oldEmailAddress);
+            if (user != null && user.getEmailAddress().equals(oldEmailAddress)
+                    && !user.getConfirmationEmailValidated()) {
+                String url = "http://localhost:8081/v1/updateEmail?oldLink=" + oldEmailAddress + "&newLink="
+                        + newEmailAddress;
+                boolean status = sendEmail(url, newEmailAddress);
+                if (status) {
+                    user.setConfirmationEmailValidated(true);
+                    return true;
+                }
+                return false;
+            }
+            return false;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public boolean updateVerificationEmailAddress(String oldLink, String newLink) {
+        try {
+            String oldEmailAddress = decryptEmailAddress(oldLink);
+            String newEmailAddress = decryptEmailAddress(newLink);
+            User user = userRepository.findByEmailAddress(oldEmailAddress);
+            if (user != null && oldEmailAddress.equals(user.getEmailAddress())) {
+                user.setEmailAddress(newEmailAddress);
+                user.setEmailValidated(true);
+                user.setUpdated_AtTime(new Timestamp(System.currentTimeMillis()));
+                userRepository.save(user);
+                return true;
+            }
+            logger.info("**********User does not exist or email address is already validated **********");
+            return false;
+        } catch (Exception e) {
+            logger.info("**********Exception while validating email **********");
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    private String decryptEmailAddress(String email) {
+        try {
+            String decryptedEmail = "";
+            byte[] decodedBytes = Base64.getDecoder().decode(email);
+            decryptedEmail = new String(decodedBytes);
+            return decryptedEmail;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
     }
 
@@ -188,9 +274,8 @@ public class UserService implements UserInterface {
         return true;
     }
 
-    private boolean sendEmail(String email) throws AddressException, MessagingException, IOException {
+    private boolean sendEmail(String url, String email) throws AddressException, MessagingException, IOException {
         try {
-            String url = "http://localhost:8081/v1/validateEmail?email=" + email;
             Properties props = new Properties();
             props.put("mail.smtp.auth", "true");
             props.put("mail.smtp.starttls.enable", "true");
@@ -221,6 +306,16 @@ public class UserService implements UserInterface {
             e.printStackTrace();
             logger.info("**********Error Sending email !! **********");
             return false;
+        }
+    }
+
+    private String encryptEmailAddress(String email) {
+        try {
+            String encryptedEmail = Base64.getEncoder().encodeToString(email.getBytes());
+            return encryptedEmail;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "";
         }
     }
 
