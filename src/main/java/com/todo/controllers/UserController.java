@@ -26,9 +26,8 @@ public class UserController {
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     @RequestMapping(value = "/", method = RequestMethod.GET, produces = "application/json")
-    public ResponseEntity<String> heathEndpoint(@RequestBody User newUser) {
+    public ResponseEntity<String> heathEndpoint() {
         try {
-
             return ResponseEntity.status(HttpStatus.OK).body("available");
         } catch (Exception e) {
             logger.info("**********Exception while accessing health endpoint**********");
