@@ -25,6 +25,18 @@ public class UserController {
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
+    @RequestMapping(value = "/", method = RequestMethod.GET, produces = "application/json")
+    public ResponseEntity<String> heathEndpoint(@RequestBody User newUser) {
+        try {
+
+            return ResponseEntity.status(HttpStatus.OK).body("available");
+        } catch (Exception e) {
+            logger.info("**********Exception while accessing health endpoint**********");
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+    }
+
     @RequestMapping(value = "/register", method = RequestMethod.POST, produces = "application/json")
     public ResponseEntity<User> registerUser(@RequestBody User newUser) {
         try {
