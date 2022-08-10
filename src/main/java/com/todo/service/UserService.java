@@ -57,6 +57,7 @@ public class UserService implements UserInterface {
             String url = "http://localhost:8081/v1/validateEmail?email=" + email;
             boolean status = sendEmail(url, newUser.getEmailAddress());
             if (status) {
+                newUser.setConfirmationEmailValidated(false);
                 userRepository.save(newUser);
                 logger.info("**********User registered successfully **********");
                 return true;
@@ -205,11 +206,13 @@ public class UserService implements UserInterface {
             User user = userRepository.findByEmailAddress(oldEmailAddress);
             if (user != null && user.getEmailAddress().equals(oldEmailAddress)
                     && !user.getConfirmationEmailValidated()) {
-                String url = "http://localhost:8081/v1/updateEmail?oldLink=" + oldEmailAddress + "&newLink="
-                        + newEmailAddress;
+                String url = "http://localhost:8081/v1/updateEmail?oldLink=" + oldLink + "&newLink="
+                        + newLink;
                 boolean status = sendEmail(url, newEmailAddress);
                 if (status) {
                     user.setConfirmationEmailValidated(true);
+                    user.setUpdated_AtTime(new Timestamp(System.currentTimeMillis()));
+                    userRepository.save(user);
                     return true;
                 }
                 return false;
@@ -230,6 +233,7 @@ public class UserService implements UserInterface {
             if (user != null && oldEmailAddress.equals(user.getEmailAddress())) {
                 user.setEmailAddress(newEmailAddress);
                 user.setEmailValidated(true);
+                user.setConfirmationEmailValidated(false);
                 user.setUpdated_AtTime(new Timestamp(System.currentTimeMillis()));
                 userRepository.save(user);
                 return true;

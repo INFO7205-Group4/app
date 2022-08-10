@@ -7,6 +7,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.ResponseEntity.BodyBuilder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -22,7 +25,7 @@ public class AuthenticationService implements AuthServiceInterface {
 	UserRepository userRepository;
 
 	@Override
-	public Boolean validateBasicAuthentication(String basicAuthHeaderValue) {
+	public ResponseEntity validateBasicAuthentication(String basicAuthHeaderValue) {
 		try {
 			BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
 			if (StringUtils.hasText(basicAuthHeaderValue) && basicAuthHeaderValue.toLowerCase().startsWith("basic")) {
@@ -36,13 +39,20 @@ public class AuthenticationService implements AuthServiceInterface {
 					String password = values[1];
 					User user = userRepository.findByEmailAddress(username);
 					if (user != null && bCryptPasswordEncoder.matches(password, user.getUserPassword())) {
-						return true;
+						if (user.getEmailValidated()) {
+							return new ResponseEntity(HttpStatus.OK);
+
+						} else {
+							return new ResponseEntity(HttpStatus.FORBIDDEN);
+						}
+					} else {
+						return new ResponseEntity(HttpStatus.UNAUTHORIZED);
 					}
 				}
 			}
-			return false;
+			return new ResponseEntity(HttpStatus.UNAUTHORIZED);
 		} catch (Exception e) {
-			return false;
+			return new ResponseEntity(HttpStatus.UNAUTHORIZED);
 		}
 
 	}

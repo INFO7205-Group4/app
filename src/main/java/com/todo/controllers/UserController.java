@@ -40,7 +40,7 @@ public class UserController {
         }
     }
 
-    @RequestMapping(value = "/validateEmail", method = RequestMethod.POST, produces = "application/json")
+    @RequestMapping(value = "/validateEmail", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<User> validateEmail(@RequestParam String email) {
         try {
             boolean status = User.validateEmailLink(email);
@@ -125,7 +125,7 @@ public class UserController {
 
     }
 
-    @RequestMapping(value = "/confirmationLink", method = RequestMethod.POST, produces = "application/json")
+    @RequestMapping(value = "/confirmationLink", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<User> confirmUpdateEmailAddress(@RequestParam String oldLink, @RequestParam String newLink) {
         try {
             boolean status = User.sendUpdatedEmailVerificationLink(oldLink, newLink);
@@ -140,7 +140,7 @@ public class UserController {
         }
     }
 
-    @RequestMapping(value = "/updateEmail", method = RequestMethod.POST, produces = "application/json")
+    @RequestMapping(value = "/updateEmail", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<User> validateUpdatedEmailAddress(@RequestParam String oldLink,
             @RequestParam String newLink) {
         try {

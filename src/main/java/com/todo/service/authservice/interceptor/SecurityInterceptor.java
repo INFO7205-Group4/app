@@ -8,6 +8,8 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.ResponseEntity.BodyBuilder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.method.HandlerMethod;
@@ -57,11 +59,15 @@ public class SecurityInterceptor extends HandlerInterceptorAdapter {
                     String basicAuthHeaderValue = request.getHeader(AUTH_HEADER_PARAMETER_AUTHORIZATION);
 
                     // Process basic authentication
-                    isValidBasicAuthRequest = authService.validateBasicAuthentication(basicAuthHeaderValue);
-
-                    // If this is invalid request, then set the status as UNAUTHORIZED.
-                    if (!isValidBasicAuthRequest) {
+                    ResponseEntity x = authService.validateBasicAuthentication(basicAuthHeaderValue);
+                    if (x.getStatusCode() == HttpStatus.FORBIDDEN) {
+                        isValidBasicAuthRequest = false;
+                        response.setStatus(HttpStatus.FORBIDDEN.value());
+                    } else if (x.getStatusCode() == HttpStatus.UNAUTHORIZED) {
+                        isValidBasicAuthRequest = false;
                         response.setStatus(HttpStatus.UNAUTHORIZED.value());
+                    } else {
+                        isValidBasicAuthRequest = true;
                     }
 
                 } catch (Exception e) {
