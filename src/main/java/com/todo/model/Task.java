@@ -3,7 +3,11 @@ package com.todo.model;
 import javax.persistence.*;
 //import org.hibernate.type.descriptor.jdbc.SmallIntJdbcType;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.sql.Timestamp;
+import java.util.List;
+import java.util.Set;
 
 //@Entity
 //@Table(name="Task")
@@ -18,6 +22,10 @@ public class Task {
     private short Task_Priority;
     private Timestamp created_AtTime;
     private Timestamp updated_AtTime;
+
+    @OneToMany(mappedBy = "mTasks", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private Set<Attachment> attachments;
 
     public Task() {
 
@@ -77,5 +85,13 @@ public class Task {
 
     public void setUpdated_AtTime(Timestamp updated_AtTime) {
         this.updated_AtTime = updated_AtTime;
+    }
+
+    public Set<Attachment> getAttachments() {
+        return attachments;
+    }
+
+    public void setAttachment(Set<Attachment> attachments) {
+        this.attachments = attachments;
     }
 }

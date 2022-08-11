@@ -2,6 +2,8 @@ package com.todo.model;
 
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.sql.Timestamp;
 
 //@Entity
@@ -19,12 +21,16 @@ public class Attachment {
 
     private short Attachment_Size;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "task_Id", nullable = false)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private Task mTasks;
 
     @Lob
-    @Column(name="Attachment_File")
+    @Column(name = "Attachment_File")
     private byte[] attachment_File;
 
-    public Attachment(){
+    public Attachment() {
 
     }
 
@@ -67,4 +73,13 @@ public class Attachment {
     public void setAttachment_File(byte[] attachment_File) {
         this.attachment_File = attachment_File;
     }
+
+    public Task getmTasks() {
+        return mTasks;
+    }
+
+    public void setmUsers(Task mTasks) {
+        this.mTasks = mTasks;
+    }
+
 }
