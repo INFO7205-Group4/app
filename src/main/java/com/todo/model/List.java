@@ -1,6 +1,9 @@
 package com.todo.model;
 
 import java.sql.Timestamp;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -8,10 +11,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="List")
+@Table(name = "List")
 public class List {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,28 +24,39 @@ public class List {
     private Timestamp created_AtTime;
     private Timestamp updated_AtTime;
 
-   @ManyToOne(fetch = FetchType.LAZY, optional = false)
-   @JoinColumn(name="userId",nullable=false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "userId", nullable = false)
     private User mUsers;
 
-  public List(int id, String listname, Timestamp createdTimestamp, Timestamp updatedTimestamp, User user) {
-    this.list_name=listname;
-    this.list_Id=id;
-    this.created_AtTime=createdTimestamp;
-    this.updated_AtTime=updatedTimestamp;
-    this.mUsers=user;
-  }
+    @OneToMany(mappedBy = "mList", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Task> tasks;
 
-  public User getmUsers() {
-    return mUsers;
-  }
+    public List(int id, String listname, Timestamp createdTimestamp, Timestamp updatedTimestamp, User user) {
+        this.list_name = listname;
+        this.list_Id = id;
+        this.created_AtTime = createdTimestamp;
+        this.updated_AtTime = updatedTimestamp;
+        this.mUsers = user;
+    }
 
-  public void setmUsers(User mUsers) {
-    this.mUsers = mUsers;
-  }
+    public List() {
 
-  public List() {
+    }
 
+    public User getmUsers() {
+        return mUsers;
+    }
+
+    public void setmUsers(User mUsers) {
+        this.mUsers = mUsers;
+    }
+
+    public Set<Task> getTasks() {
+        return tasks;
+    }
+
+    public void setTasks(Set<Task> tasks) {
+        this.tasks = tasks;
     }
 
     public Integer getList_Id() {

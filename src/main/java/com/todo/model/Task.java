@@ -5,8 +5,8 @@ import javax.persistence.*;
 
 import java.sql.Timestamp;
 
-//@Entity
-//@Table(name="Task")
+@Entity
+@Table(name = "Task")
 public class Task {
 
     @Id
@@ -19,8 +19,20 @@ public class Task {
     private Timestamp created_AtTime;
     private Timestamp updated_AtTime;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "list_id", nullable = false)
+    private List mList;
+
     public Task() {
 
+    }
+
+    public List getmList() {
+        return mList;
+    }
+
+    public void setmList(List mList) {
+        this.mList = mList;
     }
 
     public String getTask_Id() {

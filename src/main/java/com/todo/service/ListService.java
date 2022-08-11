@@ -24,26 +24,27 @@ public class ListService implements ListInterface {
 
     User user = userInterface.getUserDetails(email);
 
-    List list = new List(1,"listname",new Timestamp(System.currentTimeMillis()),new Timestamp(System.currentTimeMillis()),user);
-//    java.util.List<List> lists= listRepository.findList(user.getUserId());
-//    newList.setList_name(newList.getList_name());
-//    newList.setCreated_AtTime(new Timestamp(System.currentTimeMillis()));
-//    newList.setUpdated_AtTime(new Timestamp(System.currentTimeMillis()));
-//    newList.setmUsers(user);
-//    newList.setList_name("listname");
-//    newList.setCreated_AtTime(new Timestamp(System.currentTimeMillis()));
-//    newList.setUpdated_AtTime(new Timestamp(System.currentTimeMillis()));
-//    newList.setmUsers(user);
+    // List list = new List(1,"listname",new
+    // Timestamp(System.currentTimeMillis()),new
+    // Timestamp(System.currentTimeMillis()),user);
+    // java.util.List<List> lists= listRepository.findList(user.getUserId());
+    newList.setList_name(newList.getList_name());
+    newList.setCreated_AtTime(new Timestamp(System.currentTimeMillis()));
+    newList.setUpdated_AtTime(new Timestamp(System.currentTimeMillis()));
+    newList.setmUsers(user);
+    // newList.setList_name("listname");
+    // newList.setCreated_AtTime(new Timestamp(System.currentTimeMillis()));
+    // newList.setUpdated_AtTime(new Timestamp(System.currentTimeMillis()));
+    // newList.setmUsers(user);
     try {
-        listRepository.save(list);
-        logger.info("**********User registered successfully **********");
-        return true;
+      listRepository.save(newList);
+      logger.info("**********User registered successfully **********");
+      return true;
     } catch (Exception exception) {
       exception.printStackTrace();
       logger.info("**********Exception while registering the user ! **********");
       return false;
     }
   }
-
 
 }
