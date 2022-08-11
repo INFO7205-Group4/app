@@ -1,12 +1,14 @@
 package com.todo.service;
 
+import com.todo.Interface.UserInterface;
+import com.todo.model.List;
+import com.todo.model.User;
+import com.todo.repositories.ListRepository;
+import com.todo.repositories.UserRepository;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.Base64;
-import java.util.List;
 import java.util.Properties;
-
-import javax.crypto.Cipher;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
@@ -18,21 +20,18 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
-
-import com.todo.repositories.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.todo.Interface.UserInterface;
-import com.todo.model.User;
-
 @Service
 public class UserService implements UserInterface {
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    ListRepository listRepository;
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     @Override
@@ -76,10 +75,19 @@ public class UserService implements UserInterface {
             email = decryptEmailAddress(email);
             User user = userRepository.findByEmailAddress(email);
             if (user != null && email.equals(user.getEmailAddress()) && !user.getEmailValidated()) {
-
                 user.setEmailValidated(true);
                 user.setUpdated_AtTime(new Timestamp(System.currentTimeMillis()));
                 userRepository.save(user);
+                List list = new List();
+                list.setList_name("");
+                list.setCreated_AtTime(new Timestamp(System.currentTimeMillis()));
+                list.setUpdated_AtTime(new Timestamp(System.currentTimeMillis()));
+                list.setmUsers(user);
+                listRepository.save(list);
+//                boolean defaultList = ListController.createDefaultList(user);
+//                if(!defaultList){
+//                    logger.info("**********Exception while creating default list for user **********");
+//                }
                 return true;
             }
             logger.info("**********User does not exist or email address is already validated **********");

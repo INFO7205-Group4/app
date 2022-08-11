@@ -11,5 +11,4 @@ public interface ListRepository extends JpaRepository<List, Integer> {
 
   @Query("select l from List l where l.list_Id= ?1")
   public List findByListId(Integer listId);
-
 }

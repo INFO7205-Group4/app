@@ -1,8 +1,8 @@
 package com.todo.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.sql.Timestamp;
 import java.util.Set;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -15,7 +15,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "List")
+@Table(name="List")
 public class List {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,11 +24,13 @@ public class List {
     private Timestamp created_AtTime;
     private Timestamp updated_AtTime;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "userId", nullable = false)
+   @ManyToOne(fetch = FetchType.LAZY, optional = false)
+   @JoinColumn(name="userId",nullable=false)
+   @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private User mUsers;
 
     @OneToMany(mappedBy = "mList", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    //@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Set<Task> tasks;
 
     public List(int id, String listname, Timestamp createdTimestamp, Timestamp updatedTimestamp, User user) {
@@ -47,9 +49,9 @@ public class List {
         return mUsers;
     }
 
-    public void setmUsers(User mUsers) {
-        this.mUsers = mUsers;
-    }
+  public void setmUsers(User mUsers) {
+    this.mUsers = mUsers;
+  }
 
     public Set<Task> getTasks() {
         return tasks;

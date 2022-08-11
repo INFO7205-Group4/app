@@ -22,42 +22,21 @@ public class TaskService implements TaskInterface {
 
     @Autowired
     TaskRepository taskRepository;
-
-    @Autowired
-    UserInterface userInterface;
-    @Autowired
-    UserRepository userRepository;
-
     @Autowired
     ListRepository listRepository;
-    @Autowired
-    TaskInterface taskInterface;
 
     final Logger logger = LoggerFactory.getLogger(TaskService.class);
 
     @Override
-    public boolean createTask(Task newTask, String email, Integer listId) {
-
+    public boolean createTask(Task task, Integer listId) {
         try {
-
-            User user = userInterface.getUserDetails(email);
             List list = listRepository.findByListId(listId);
-            // List list = new List(1,"listname",new
-            // Timestamp(System.currentTimeMillis()),new
-            // Timestamp(System.currentTimeMillis()),user);
-
-            newTask.setmList(list);
-            newTask.setTask_Name(newTask.getTask_Name());
-            newTask.setTask_Summary(newTask.getTask_Summary());
-            newTask.setTask_Priority(newTask.getTask_Priority());
-            newTask.setUpdated_AtTime(new Timestamp(System.currentTimeMillis()));
-            newTask.setCreated_AtTime(new Timestamp(System.currentTimeMillis()));
-            newTask.setDueDate(newTask.getDueDate());
-            newTask.setTask_Priority(newTask.getTask_Priority());
-            // newTask.setmUsers(user);
-            // newList.setmUsers(user);
+            task.setmList(list);
+            task.setDueDate(new Timestamp(System.currentTimeMillis()));
+            task.setUpdated_AtTime(new Timestamp(System.currentTimeMillis()));
+            task.setCreated_AtTime(new Timestamp(System.currentTimeMillis()));
             try {
-                taskRepository.save(newTask);
+                taskRepository.save(task);
                 logger.info("**********Task saved successfully **********");
                 return true;
             } catch (Exception exception) {
@@ -65,25 +44,49 @@ public class TaskService implements TaskInterface {
                 logger.info("**********Exception while creating the task ! **********");
                 return false;
             }
-
-        } catch (Exception e) {
-
+        } catch (Exception exception) {
+            logger.info("**********Exception while creating Task **********");
+            exception.printStackTrace();
+            return false;
         }
-        return false;
     }
 
+    /**
+     * @param listId 
+     * @return
+     */
     @Override
-    public User getUserDetails(String email) {
+    public java.util.List<Task> getTask(Integer listId) {
         try {
-            User getUser = userRepository.findByEmailAddress(email);
-            if (getUser != null) {
-                return getUser;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+            java.util.List<Task> tasks = taskRepository.getTasks(listId);
+            logger.info("********** Task retrieved successfully **********");
+            return tasks;
+        } catch(Exception exception){
+            logger.info("**********Exception while getting task **********");
+            exception.printStackTrace();
             return null;
         }
-        logger.info("**********User does not exist **********");
-        return null;
     }
+
+    /**
+     * @param task
+     * @return
+     */
+    @Override
+    public boolean deleteTask(Task task) {
+        try {
+            Task deleteTask = taskRepository.findByTaskId(task.getTask_Id());
+            if (deleteTask != null) {
+                taskRepository.delete(deleteTask);
+                logger.info("**********Task deleted successfully **********");
+                return true;
+            }
+            return false;
+        }catch (Exception exception){
+            logger.info("**********Exception while deleting Task **********");
+            exception.printStackTrace();
+            return false;
+    }
+}
+
 }
