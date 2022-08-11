@@ -32,6 +32,7 @@ public class User {
     private Timestamp emailSentTime;
     private Timestamp created_AtTime;
     private Timestamp updated_AtTime;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Boolean confirmationEmailValidated;
 
     public Boolean getConfirmationEmailValidated() {
@@ -43,6 +44,7 @@ public class User {
     }
 
     @OneToMany(mappedBy = "mUsers", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Set<List> lists;
 
     public User() {

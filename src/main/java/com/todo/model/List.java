@@ -1,5 +1,6 @@
 package com.todo.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.sql.Timestamp;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -22,6 +23,7 @@ public class List {
 
    @ManyToOne(fetch = FetchType.LAZY, optional = false)
    @JoinColumn(name="userId",nullable=false)
+   @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private User mUsers;
 
   public List(int id, String listname, Timestamp createdTimestamp, Timestamp updatedTimestamp, User user) {

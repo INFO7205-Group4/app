@@ -1,9 +1,12 @@
 package com.todo.service;
 
+import com.todo.Interface.ListInterface;
+import com.todo.controllers.ListController;
+import com.todo.model.List;
+import com.todo.repositories.ListRepository;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.Base64;
-import java.util.List;
 import java.util.Properties;
 
 import javax.crypto.Cipher;
@@ -33,6 +36,8 @@ import com.todo.model.User;
 public class UserService implements UserInterface {
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    ListRepository listRepository;
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     @Override
@@ -76,10 +81,19 @@ public class UserService implements UserInterface {
             email = decryptEmailAddress(email);
             User user = userRepository.findByEmailAddress(email);
             if (user != null && email.equals(user.getEmailAddress()) && !user.getEmailValidated()) {
-
                 user.setEmailValidated(true);
                 user.setUpdated_AtTime(new Timestamp(System.currentTimeMillis()));
                 userRepository.save(user);
+                com.todo.model.List list = new List();
+                list.setList_name("");
+                list.setCreated_AtTime(new Timestamp(System.currentTimeMillis()));
+                list.setUpdated_AtTime(new Timestamp(System.currentTimeMillis()));
+                list.setmUsers(user);
+                listRepository.save(list);
+//                boolean defaultList = ListController.createDefaultList(user);
+//                if(!defaultList){
+//                    logger.info("**********Exception while creating default list for user **********");
+//                }
                 return true;
             }
             logger.info("**********User does not exist or email address is already validated **********");

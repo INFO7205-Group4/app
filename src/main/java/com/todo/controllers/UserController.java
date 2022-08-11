@@ -107,6 +107,9 @@ public class UserController {
             String loggedInUser = AuthService.getUserName(request);
             User userDetails = User.getUserDetails(loggedInUser);
             if (userDetails != null) {
+                if(userDetails.getmName() == null){
+                    userDetails.setmName("");
+                }
                 return new ResponseEntity<User>(userDetails, HttpStatus.OK);
             }
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
