@@ -1,37 +1,63 @@
 package com.todo.model;
 
-import javax.persistence.*;
-
 import java.sql.Timestamp;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
-//@Entity
-//@Table(name="List")
+@Entity
+@Table(name="List")
 public class List {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private String listId;
-    private String listName;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer list_Id;
+    private String list_name;
     private Timestamp created_AtTime;
     private Timestamp updated_AtTime;
 
-    public List() {
+   @ManyToOne(fetch = FetchType.LAZY, optional = false)
+   @JoinColumn(name="userId",nullable=false)
+    private User mUsers;
+
+  public List(int id, String listname, Timestamp createdTimestamp, Timestamp updatedTimestamp, User user) {
+    this.list_name=listname;
+    this.list_Id=id;
+    this.created_AtTime=createdTimestamp;
+    this.updated_AtTime=updatedTimestamp;
+    this.mUsers=user;
+  }
+
+  public User getmUsers() {
+    return mUsers;
+  }
+
+  public void setmUsers(User mUsers) {
+    this.mUsers = mUsers;
+  }
+
+  public List() {
 
     }
 
-    public String getListId() {
-        return listId;
+    public Integer getList_Id() {
+        return list_Id;
     }
 
-    public void setListId(String listId) {
-        this.listId = listId;
+    public void setList_Id(Integer list_Id) {
+        this.list_Id = list_Id;
     }
 
-    public String getListName() {
-        return listName;
+    public String getList_name() {
+        return list_name;
     }
 
-    public void setListName(String listName) {
-        this.listName = listName;
+    public void setList_name(String list_name) {
+        this.list_name = list_name;
     }
 
     public Timestamp getCreated_AtTime() {
@@ -49,4 +75,5 @@ public class List {
     public void setUpdated_AtTime(Timestamp updated_AtTime) {
         this.updated_AtTime = updated_AtTime;
     }
+
 }

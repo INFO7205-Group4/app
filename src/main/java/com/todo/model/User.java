@@ -1,10 +1,16 @@
 package com.todo.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
-import javax.persistence.*;
-
 import java.sql.Timestamp;
+import java.util.Set;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 @Entity
 @Table(name = "Users")
@@ -35,6 +41,9 @@ public class User {
     public void setConfirmationEmailValidated(Boolean confirmationEmailValidated) {
         this.confirmationEmailValidated = confirmationEmailValidated;
     }
+
+    @OneToMany(mappedBy = "mUsers", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<List> lists;
 
     public User() {
     }
@@ -117,5 +126,13 @@ public class User {
 
     public void setUpdated_AtTime(Timestamp updated_AtTime) {
         this.updated_AtTime = updated_AtTime;
+    }
+
+    public Set<List> getLists() {
+        return lists;
+    }
+
+    public void setLists(Set<List> lists) {
+        this.lists = lists;
     }
 }
