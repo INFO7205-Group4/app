@@ -80,17 +80,10 @@ public class UserService implements UserInterface {
                 user.setEmailValidated(true);
                 user.setUpdated_AtTime(new Timestamp(System.currentTimeMillis()));
                 userRepository.save(user);
-                List list = new List();
-                list.setList_name("");
-                list.setCreated_AtTime(new Timestamp(System.currentTimeMillis()));
-                list.setUpdated_AtTime(new Timestamp(System.currentTimeMillis()));
-                list.setmUsers(user);
-                listRepository.save(list);
-                // boolean defaultList = ListController.createDefaultList(user);
-                // if(!defaultList){
-                // logger.info("**********Exception while creating default list for user
-                // **********");
-                // }
+                boolean defaultList = createDefaultList(user);
+                if (!defaultList) {
+                    logger.info("**********Exception while creating default list for user**********");
+                }
                 return true;
             }
             logger.info("**********User does not exist or email address is already validated **********");
@@ -283,7 +276,8 @@ public class UserService implements UserInterface {
         }
         if (newUser.getfName().isEmpty() || newUser.getfName().isBlank()
                 || newUser.getlName().isEmpty() || newUser.getlName().isBlank()
-                || newUser.getEmailAddress().isEmpty() || newUser.getEmailAddress().isBlank()) {
+                || newUser.getEmailAddress().isEmpty() || newUser.getEmailAddress().isBlank()
+                || newUser.getUserPassword().isEmpty() || newUser.getUserPassword().isBlank()) {
             return false;
         }
         return true;
@@ -331,6 +325,23 @@ public class UserService implements UserInterface {
         } catch (Exception e) {
             e.printStackTrace();
             return "";
+        }
+    }
+
+    private boolean createDefaultList(User user) {
+        try {
+            List newList = new List();
+            newList.setListName("New List");
+            newList.setCreatedAtTime(new Timestamp(System.currentTimeMillis()));
+            newList.setUpdatedAtTime(new Timestamp(System.currentTimeMillis()));
+            newList.setmUsers(user);
+            listRepository.save(newList);
+            logger.info("**********Default List created successfully **********");
+            return true;
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            logger.info("**********Exception while creating the default list! **********");
+            return false;
         }
     }
 

@@ -1,7 +1,6 @@
 package com.todo.Interface;
 
 import com.todo.model.List;
-import com.todo.model.User;
 
 public interface ListInterface {
 
@@ -11,7 +10,6 @@ public interface ListInterface {
 
   boolean updateList(List updatedList);
 
-  java.util.List<List> getList(String loggedInUser);
+  java.util.List<List> getAllListForParticularUser(String loggedInUser);
 
-  boolean createDefaultList(User user);
 }

@@ -20,9 +20,9 @@ public class List {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer list_Id;
-    private String list_name;
-    private Timestamp created_AtTime;
-    private Timestamp updated_AtTime;
+    private String listName;
+    private Timestamp createdAtTime;
+    private Timestamp updatedAtTime;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "userId", nullable = false)
@@ -33,11 +33,11 @@ public class List {
     // @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Set<Task> tasks;
 
-    public List(int id, String listname, Timestamp createdTimestamp, Timestamp updatedTimestamp, User user) {
-        this.list_name = listname;
+    public List(int id, String listName, Timestamp createdTimestamp, Timestamp updatedTimestamp, User user) {
+        this.listName = listName;
         this.list_Id = id;
-        this.created_AtTime = createdTimestamp;
-        this.updated_AtTime = updatedTimestamp;
+        this.createdAtTime = createdTimestamp;
+        this.updatedAtTime = updatedTimestamp;
         this.mUsers = user;
     }
 
@@ -61,36 +61,36 @@ public class List {
         this.tasks = tasks;
     }
 
-    public Integer getList_Id() {
+    public Integer getListId() {
         return list_Id;
     }
 
-    public void setList_Id(Integer list_Id) {
-        this.list_Id = list_Id;
+    public void setListId(Integer listId) {
+        this.list_Id = listId;
     }
 
-    public String getList_name() {
-        return list_name;
+    public String getListName() {
+        return listName;
     }
 
-    public void setList_name(String list_name) {
-        this.list_name = list_name;
+    public void setListName(String listName) {
+        this.listName = listName;
     }
 
-    public Timestamp getCreated_AtTime() {
-        return created_AtTime;
+    public Timestamp getCreatedAtTime() {
+        return createdAtTime;
     }
 
-    public void setCreated_AtTime(Timestamp created_AtTime) {
-        this.created_AtTime = created_AtTime;
+    public void setCreatedAtTime(Timestamp createdAtTime) {
+        this.createdAtTime = createdAtTime;
     }
 
-    public Timestamp getUpdated_AtTime() {
-        return updated_AtTime;
+    public Timestamp getUpdatedAtTime() {
+        return updatedAtTime;
     }
 
-    public void setUpdated_AtTime(Timestamp updated_AtTime) {
-        this.updated_AtTime = updated_AtTime;
+    public void setUpdatedAtTime(Timestamp updatedAtTime) {
+        this.updatedAtTime = updatedAtTime;
     }
 
 }

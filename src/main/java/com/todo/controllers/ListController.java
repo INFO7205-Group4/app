@@ -4,7 +4,6 @@ import com.todo.Interface.AuthServiceInterface;
 import com.todo.Interface.ListInterface;
 import com.todo.Interface.NeedLogin;
 import com.todo.model.List;
-import com.todo.model.User;
 import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +35,7 @@ public class ListController {
 
   @NeedLogin
   @RequestMapping(value = "/list", method = RequestMethod.POST, produces = "application/json")
-  public ResponseEntity<com.todo.model.List> createList(@RequestBody List newList, HttpServletRequest request) {
+  public ResponseEntity<List> createList(@RequestBody List newList, HttpServletRequest request) {
     try {
       String loggedInUser = AuthService.getUserName(request);
       boolean status = List.createList(newList, loggedInUser);
@@ -54,10 +53,10 @@ public class ListController {
 
   @NeedLogin
   @RequestMapping(value = "/list", method = RequestMethod.GET, produces = "application/json")
-  public ResponseEntity<java.util.List<com.todo.model.List>> getList(HttpServletRequest request) {
+  public ResponseEntity<java.util.List<List>> getAllListForParticularUser(HttpServletRequest request) {
     try {
       String loggedInUser = AuthService.getUserName(request);
-      java.util.List<com.todo.model.List> userList = List.getList(loggedInUser);
+      java.util.List<com.todo.model.List> userList = List.getAllListForParticularUser(loggedInUser);
       return ResponseEntity.status(HttpStatus.OK).body(userList);
     } catch (Exception e) {
       logger.info("**********Exception while retrieving New List**********");
@@ -68,7 +67,7 @@ public class ListController {
 
   @NeedLogin
   @RequestMapping(value = "/updateList", method = RequestMethod.PATCH, produces = "application/json")
-  public ResponseEntity<List> updateUser(@RequestBody List updatedList) {
+  public ResponseEntity<List> updateList(@RequestBody List updatedList) {
     try {
       boolean status = List.updateList(updatedList);
       if (status) {
