@@ -29,20 +29,21 @@ public class ListController {
 
   @NeedLogin
   @RequestMapping(value = "/search", method = RequestMethod.GET, produces = "application/json")
-  public ResponseEntity<List> Search(HttpServletRequest request){
+  public ResponseEntity<List> Search(HttpServletRequest request) {
     String loggedInUser = AuthService.getUserName(request);
-      return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
+    return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
   }
+
   @NeedLogin
   @RequestMapping(value = "/list", method = RequestMethod.POST, produces = "application/json")
   public ResponseEntity<com.todo.model.List> createList(@RequestBody List newList, HttpServletRequest request) {
     try {
       String loggedInUser = AuthService.getUserName(request);
-        boolean status = List.createList(newList, loggedInUser);
-        if (status) {
-          return new ResponseEntity<List>(newList, HttpStatus.CREATED);
-        }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+      boolean status = List.createList(newList, loggedInUser);
+      if (status) {
+        return new ResponseEntity<List>(newList, HttpStatus.CREATED);
+      }
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
 
     } catch (Exception e) {
       logger.info("**********Exception while creating New List**********");
@@ -50,6 +51,7 @@ public class ListController {
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
     }
   }
+
   @NeedLogin
   @RequestMapping(value = "/list", method = RequestMethod.GET, produces = "application/json")
   public ResponseEntity<java.util.List<com.todo.model.List>> getList(HttpServletRequest request) {
@@ -83,7 +85,7 @@ public class ListController {
 
   @NeedLogin
   @RequestMapping(value = "/deleteList", method = RequestMethod.DELETE, produces = "application/json")
-  public ResponseEntity<List> deleteList(@RequestBody List newList){
+  public ResponseEntity<List> deleteList(@RequestBody List newList) {
     try {
       boolean status = List.deleteList(newList);
       if (status) {

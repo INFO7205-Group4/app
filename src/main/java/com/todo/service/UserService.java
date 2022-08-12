@@ -1,15 +1,16 @@
 package com.todo.service;
 
-import com.todo.Interface.ListInterface;
-import com.todo.controllers.ListController;
 import com.todo.model.List;
 import com.todo.repositories.ListRepository;
+import com.todo.Interface.UserInterface;
+
+import com.todo.model.User;
+
+import com.todo.repositories.UserRepository;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.Base64;
 import java.util.Properties;
-
-import javax.crypto.Cipher;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
@@ -21,16 +22,11 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
-
-import com.todo.repositories.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import com.todo.Interface.UserInterface;
-import com.todo.model.User;
 
 @Service
 public class UserService implements UserInterface {
@@ -84,16 +80,17 @@ public class UserService implements UserInterface {
                 user.setEmailValidated(true);
                 user.setUpdated_AtTime(new Timestamp(System.currentTimeMillis()));
                 userRepository.save(user);
-                com.todo.model.List list = new List();
+                List list = new List();
                 list.setList_name("");
                 list.setCreated_AtTime(new Timestamp(System.currentTimeMillis()));
                 list.setUpdated_AtTime(new Timestamp(System.currentTimeMillis()));
                 list.setmUsers(user);
                 listRepository.save(list);
-//                boolean defaultList = ListController.createDefaultList(user);
-//                if(!defaultList){
-//                    logger.info("**********Exception while creating default list for user **********");
-//                }
+                // boolean defaultList = ListController.createDefaultList(user);
+                // if(!defaultList){
+                // logger.info("**********Exception while creating default list for user
+                // **********");
+                // }
                 return true;
             }
             logger.info("**********User does not exist or email address is already validated **********");

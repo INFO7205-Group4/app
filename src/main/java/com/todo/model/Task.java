@@ -1,5 +1,6 @@
 package com.todo.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.persistence.*;
 //import org.hibernate.type.descriptor.jdbc.SmallIntJdbcType;
 
@@ -9,17 +10,18 @@ import java.sql.Timestamp;
 import java.util.List;
 import java.util.Set;
 
-//@Entity
-//@Table(name="Task")
+@Entity
+@Table(name = "Task")
 public class Task {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private String task_Id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer task_Id;
     private String task_Summary;
     private String task_Name;
     private Timestamp dueDate;
     private short Task_Priority;
+    private short Task_State;
     private Timestamp created_AtTime;
     private Timestamp updated_AtTime;
 
@@ -27,15 +29,36 @@ public class Task {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Set<Attachment> attachments;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "list_id", nullable = false)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private List mList;
+
     public Task() {
 
     }
 
-    public String getTask_Id() {
+    public short getTask_State() {
+        return Task_State;
+    }
+
+    public void setTask_State(short task_State) {
+        Task_State = task_State;
+    }
+
+    public List getmList() {
+        return mList;
+    }
+
+    public void setmList(List mList) {
+        this.mList = mList;
+    }
+
+    public Integer getTask_Id() {
         return task_Id;
     }
 
-    public void setTask_Id(String task_Id) {
+    public void setTask_Id(Integer task_Id) {
         this.task_Id = task_Id;
     }
 
