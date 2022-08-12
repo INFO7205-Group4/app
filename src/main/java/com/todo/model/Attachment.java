@@ -63,7 +63,7 @@ public class Attachment {
     }
 
     public void setAttachment_Size(short attachmentSize) {
-        attachmentSize = attachmentSize;
+        this.attachmentSize = attachmentSize;
     }
 
     public byte[] getAttachmentFile() {

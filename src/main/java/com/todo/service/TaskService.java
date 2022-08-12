@@ -6,7 +6,6 @@ import java.util.Map;
 import com.todo.Interface.TaskInterface;
 import com.todo.model.List;
 import com.todo.model.Task;
-import com.todo.model.User;
 import com.todo.repositories.ListRepository;
 import com.todo.repositories.TaskRepository;
 import org.slf4j.Logger;
