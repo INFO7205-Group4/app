@@ -7,19 +7,22 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.sql.Timestamp;
 
 @Entity
-@Table(name = "Attachment")
+@Table(name="Attachment")
 public class Attachment {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer attachment_Id;
 
     private String attachment_Name;
 
+    private String contentType;
+
+
     @Column(name = "attached_at_time", nullable = true, unique = false)
     private Timestamp attached_at_time;
 
-    private short Attachment_Size;
+    private long Attachment_Size;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "task_Id", nullable = false)
@@ -50,20 +53,36 @@ public class Attachment {
         this.attachment_Name = attachment_Name;
     }
 
-    public Timestamp getAttached_AtTime() {
+    public String getContentType() {
+        return contentType;
+    }
+
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
+    }
+
+    public Timestamp getAttached_at_time() {
         return attached_at_time;
     }
 
-    public void setAttached_AtTime(Timestamp attached_AtTime) {
-        this.attached_at_time = attached_AtTime;
+    public void setAttached_at_time(Timestamp attached_at_time) {
+        this.attached_at_time = attached_at_time;
     }
 
-    public short getAttachment_Size() {
+    public long getAttachment_Size() {
         return Attachment_Size;
     }
 
-    public void setAttachment_Size(short attachment_Size) {
+    public void setAttachment_Size(long attachment_Size) {
         Attachment_Size = attachment_Size;
+    }
+
+    public Task getmTasks() {
+        return mTasks;
+    }
+
+    public void setmTasks(Task mTasks) {
+        this.mTasks = mTasks;
     }
 
     public byte[] getAttachment_File() {
@@ -73,13 +92,4 @@ public class Attachment {
     public void setAttachment_File(byte[] attachment_File) {
         this.attachment_File = attachment_File;
     }
-
-    public Task getmTasks() {
-        return mTasks;
-    }
-
-    public void setmUsers(Task mTasks) {
-        this.mTasks = mTasks;
-    }
-
 }

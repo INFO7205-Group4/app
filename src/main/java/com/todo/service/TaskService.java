@@ -52,7 +52,7 @@ public class TaskService implements TaskInterface {
     }
 
     /**
-     * @param listId
+     * @param listId 
      * @return
      */
     @Override
@@ -61,7 +61,7 @@ public class TaskService implements TaskInterface {
             java.util.List<Task> tasks = taskRepository.getTasks(listId);
             logger.info("********** Task retrieved successfully **********");
             return tasks;
-        } catch (Exception exception) {
+        } catch(Exception exception){
             logger.info("**********Exception while getting task **********");
             exception.printStackTrace();
             return null;
@@ -82,11 +82,11 @@ public class TaskService implements TaskInterface {
                 return true;
             }
             return false;
-        } catch (Exception exception) {
+        }catch (Exception exception){
             logger.info("**********Exception while deleting Task **********");
             exception.printStackTrace();
             return false;
-        }
     }
+}
 
 }

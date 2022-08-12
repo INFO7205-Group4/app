@@ -12,4 +12,5 @@ public interface TaskRepository extends JpaRepository<Task, Integer> {
 
   @Query("Select t from Task t where t.task_Id=?1")
   Task findByTaskId(Integer task_id);
+
 }
