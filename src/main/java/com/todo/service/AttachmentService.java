@@ -14,11 +14,11 @@ public class AttachmentService implements AttachmentInterface {
     // TaskRepository taskRepository;
 
     @Override
-    public boolean createA
-         // get the task Id
-       // Task task = taskRepository.findByTaskId(taskId);
+    public boolean createAttachment(Attachment newAttachment, String loggedInUser, Integer taskId) {
+        // get the task Id
+        // Task task = taskRepository.findByTaskId(taskId);
 
-        return false;
+           return false;
     }
 
 }

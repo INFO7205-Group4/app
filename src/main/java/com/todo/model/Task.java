@@ -1,5 +1,6 @@
 package com.todo.model;
 
+import com.todo.model.List;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.persistence.*;
 //import org.hibernate.type.descriptor.jdbc.SmallIntJdbcType;
@@ -7,7 +8,6 @@ import javax.persistence.*;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.sql.Timestamp;
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -26,7 +26,6 @@ public class Task {
     private Timestamp updated_AtTime;
 
     @OneToMany(mappedBy = "mTasks", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Set<Attachment> attachments;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -50,8 +49,8 @@ public class Task {
         return mList;
     }
 
-    public void setmList(List mList) {
-        this.mList = mList;
+    public void setmList(com.todo.model.List list) {
+        this.mList = list;
     }
 
     public Integer getTask_Id() {

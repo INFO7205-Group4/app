@@ -6,8 +6,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.sql.Timestamp;
 
-//@Entity
-//@Table(name="Attachment")
+@Entity
+@Table(name = "Attachment")
 public class Attachment {
 
     @Id
