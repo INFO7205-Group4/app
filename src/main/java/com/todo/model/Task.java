@@ -26,6 +26,10 @@ public class Task {
     //@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Set<Attachment> attachments;
 
+    @OneToMany(mappedBy = "cTask", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    //@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private Set<Comment> comments;
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "list_id", nullable = false)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
