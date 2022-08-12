@@ -1,13 +1,13 @@
 package com.todo.Interface;
 
 import com.todo.model.Task;
-import com.todo.model.User;
 import java.util.List;
+import java.util.Map;
 
 public interface TaskInterface {
-    boolean createTask(Task task, Integer listId);
+  boolean createTask(Map<String, String> taskData);
 
-  List<Task> getTask(Integer listId);
+  List<Task> getTasksForParticularUser(Integer listId);
 
   boolean deleteTask(Task task);
 }

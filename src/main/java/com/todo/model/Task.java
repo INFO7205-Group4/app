@@ -1,12 +1,7 @@
 package com.todo.model;
 
-import com.todo.model.List;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.persistence.*;
-//import org.hibernate.type.descriptor.jdbc.SmallIntJdbcType;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.sql.Timestamp;
 import java.util.Set;
 
@@ -17,13 +12,13 @@ public class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer task_Id;
-    private String task_Summary;
-    private String task_Name;
+    private String taskSummary;
+    private String taskName;
     private Timestamp dueDate;
-    private short Task_Priority;
-    private short Task_State;
-    private Timestamp created_AtTime;
-    private Timestamp updated_AtTime;
+    private short taskPriority;
+    private short taskState;
+    private Timestamp createdAtTime;
+    private Timestamp updatedAtTime;
 
     @OneToMany(mappedBy = "mTasks", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Attachment> attachments;
@@ -37,19 +32,19 @@ public class Task {
 
     }
 
-    public short getTask_State() {
-        return Task_State;
+    public short getTaskState() {
+        return taskState;
     }
 
-    public void setTask_State(short task_State) {
-        Task_State = task_State;
+    public void setTaskState(short taskState) {
+        this.taskState = taskState;
     }
 
     public List getmList() {
         return mList;
     }
 
-    public void setmList(com.todo.model.List list) {
+    public void setmList(List list) {
         this.mList = list;
     }
 
@@ -61,20 +56,20 @@ public class Task {
         this.task_Id = task_Id;
     }
 
-    public String getTask_Summary() {
-        return task_Summary;
+    public String getTaskSummary() {
+        return taskSummary;
     }
 
-    public void setTask_Summary(String task_Summary) {
-        this.task_Summary = task_Summary;
+    public void setTaskSummary(String taskSummary) {
+        this.taskSummary = taskSummary;
     }
 
-    public String getTask_Name() {
-        return task_Name;
+    public String getTaskName() {
+        return taskName;
     }
 
-    public void setTask_Name(String task_Name) {
-        this.task_Name = task_Name;
+    public void setTaskName(String taskName) {
+        this.taskName = taskName;
     }
 
     public Timestamp getDueDate() {
@@ -85,28 +80,28 @@ public class Task {
         this.dueDate = dueDate;
     }
 
-    public short getTask_Priority() {
-        return Task_Priority;
+    public short getTaskPriority() {
+        return taskPriority;
     }
 
-    public void setTask_Priority(short task_Priority) {
-        Task_Priority = task_Priority;
+    public void setTaskPriority(short taskPriority) {
+        this.taskPriority = taskPriority;
     }
 
-    public Timestamp getCreated_AtTime() {
-        return created_AtTime;
+    public Timestamp getCreatedAtTime() {
+        return createdAtTime;
     }
 
-    public void setCreated_AtTime(Timestamp created_AtTime) {
-        this.created_AtTime = created_AtTime;
+    public void setCreatedAtTime(Timestamp createdAtTime) {
+        this.createdAtTime = createdAtTime;
     }
 
-    public Timestamp getUpdated_AtTime() {
-        return updated_AtTime;
+    public Timestamp getUpdatedAtTime() {
+        return updatedAtTime;
     }
 
-    public void setUpdated_AtTime(Timestamp updated_AtTime) {
-        this.updated_AtTime = updated_AtTime;
+    public void setUpdatedAtTime(Timestamp updatedAtTime) {
+        this.updatedAtTime = updatedAtTime;
     }
 
     public Set<Attachment> getAttachments() {

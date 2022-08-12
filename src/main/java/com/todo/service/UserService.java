@@ -40,6 +40,7 @@ public class UserService implements UserInterface {
     public boolean registerUser(User newUser) {
         boolean validationStatus = validateInput(newUser);
         if (!validationStatus) {
+            logger.info("**********Input validation failed **********");
             return false;
         }
         User user = userRepository.findByEmailAddress(newUser.getEmailAddress());
@@ -274,9 +275,10 @@ public class UserService implements UserInterface {
         if (!isValidEmailAddress(newUser.getEmailAddress())) {
             return false;
         }
-        if (newUser.getfName().isEmpty() || newUser.getfName().isBlank()
-                || newUser.getlName().isEmpty() || newUser.getlName().isBlank()
-                || newUser.getEmailAddress().isEmpty() || newUser.getEmailAddress().isBlank()
+        if (newUser.getfName() == null || newUser.getfName().isEmpty() || newUser.getfName().isBlank() ||
+                newUser.getlName() == null || newUser.getlName().isEmpty() || newUser.getlName().isBlank() ||
+                newUser.getEmailAddress() == null || newUser.getEmailAddress().isEmpty()
+                || newUser.getEmailAddress().isBlank() || newUser.getUserPassword() == null
                 || newUser.getUserPassword().isEmpty() || newUser.getUserPassword().isBlank()) {
             return false;
         }
