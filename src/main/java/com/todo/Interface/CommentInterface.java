@@ -2,6 +2,7 @@ package com.todo.Interface;
 
 import com.todo.model.Comment;
 import java.util.List;
+import javax.persistence.criteria.CriteriaBuilder.In;
 
 public interface CommentInterface {
 
@@ -9,7 +10,7 @@ public interface CommentInterface {
 
   List<Comment> getComment(Integer taskId);
 
-  boolean updateComment(Comment updatedComment);
+  boolean updateComment(Comment updatedComment, Integer taskId);
 
   boolean deleteComment(Integer commentId);
 }

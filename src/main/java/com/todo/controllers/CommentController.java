@@ -78,7 +78,7 @@ public class CommentController {
       if(String.valueOf(taskId).equals(null) && String.valueOf(taskId).equals("")){
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Empty or null value for TaskId");
       }
-      boolean status = commentInterface.updateComment(updatedComment);
+      boolean status = commentInterface.updateComment(updatedComment, taskId);
       if (status) {
         return ResponseEntity.status(HttpStatus.OK).body(updatedComment);
       }

@@ -66,8 +66,12 @@ public class CommentService implements CommentInterface {
    * @return
    */
   @Override
-  public boolean updateComment(Comment updatedComment) {
+  public boolean updateComment(Comment updatedComment, Integer taskId) {
     try{
+      Task task = taskRepository.findByTaskId(taskId);
+      if (task == null) {
+        return false;
+      }
       commentRepository.save(updatedComment);
       logger.info("**********Updated comment successfully **********");
       return true;
