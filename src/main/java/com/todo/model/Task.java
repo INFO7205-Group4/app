@@ -23,12 +23,16 @@ public class Task {
     private Timestamp updated_AtTime;
 
     @OneToMany(mappedBy = "mTasks", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    //@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Set<Attachment> attachments;
 
     @OneToMany(mappedBy = "cTask", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    //@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Set<Comment> comments;
+
+    @OneToMany(mappedBy = "rTask", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    //@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private Set<Reminder> reminders;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "list_id", nullable = false)

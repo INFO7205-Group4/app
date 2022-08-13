@@ -19,7 +19,7 @@ public class Comment {
     private Timestamp updated_AtTime;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name="taskId",nullable=false)
+    @JoinColumn(name="task_Id",nullable=false)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Task cTask;
 

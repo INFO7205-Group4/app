@@ -80,7 +80,7 @@ public class CommentController {
         logger.info("**********No Task ID value **********");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
       }
-      if(updatedComment.getComment() == null){
+      if(updatedComment.getComment_Id() == null || String.valueOf(updatedComment.getComment_Id()).equals("")){
         logger.info("**********No Comment ID value **********");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
       }

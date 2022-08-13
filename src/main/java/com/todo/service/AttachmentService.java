@@ -38,7 +38,8 @@ public class AttachmentService implements AttachmentInterface {
         return 1;
       }
       List<Attachment> attachedFiles = attachmentRepository.getAttachmentByTaskId(taskId);
-      if(attachedFiles.size() == 5){
+      if(attachedFiles.size() >= 5){
+        logger.info("**********Max Attachment Limit reached**********");
         return 2;
       }
       Attachment attachment = new Attachment();
