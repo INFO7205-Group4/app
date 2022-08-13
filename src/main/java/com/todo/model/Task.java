@@ -3,6 +3,8 @@ package com.todo.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -26,7 +28,14 @@ public class Task {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "list_id", nullable = false)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private List mList;
+    private com.todo.model.List mList;
+
+    @ManyToMany(cascade = {
+            CascadeType.PERSIST,
+            CascadeType.MERGE
+    })
+    @JoinTable(name = "TagTask", joinColumns = @JoinColumn(name = "task_Id"), inverseJoinColumns = @JoinColumn(name = "tag_Id"))
+    private List<Tag> tags = new ArrayList<>();
 
     public Task() {
 
@@ -40,11 +49,11 @@ public class Task {
         this.taskState = taskState;
     }
 
-    public List getmList() {
+    public com.todo.model.List getmList() {
         return mList;
     }
 
-    public void setmList(List list) {
+    public void setmList(com.todo.model.List list) {
         this.mList = list;
     }
 
@@ -110,5 +119,14 @@ public class Task {
 
     public void setAttachment(Set<Attachment> attachments) {
         this.attachments = attachments;
+    }
+
+    public List<Tag> getTags() {
+        return tags;
+    }
+
+    public void setTags(Tag tag) {
+        tags.add(tag);
+
     }
 }

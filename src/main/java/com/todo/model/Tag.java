@@ -1,24 +1,36 @@
 package com.todo.model;
 
 import javax.persistence.*;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
-//@Entity
-//@Table(name="Tag")
+@Entity
+@Table(name = "Tag")
 public class Tag {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private String tag_Id;
 
-    private String tag_Name;
+    private String tagName;
 
-    private Timestamp created_AtTime;
+    private Timestamp createdAtTime;
 
-    private Timestamp updated_AtTime;
+    private Timestamp updatedAtTime;
 
-    public Tag(){
+    @ManyToMany(mappedBy = "tags")
+    private List<Task> allTasks = new ArrayList<>();
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "userId", nullable = false)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private User mUsers;
+
+    // private List<Task> taskSet = new ArrayList<>();;
+
+    public Tag() {
 
     }
 
@@ -30,27 +42,44 @@ public class Tag {
         this.tag_Id = tag_Id;
     }
 
-    public String getTag_Name() {
-        return tag_Name;
+    public String getTagName() {
+        return tagName;
     }
 
-    public void setTag_Name(String tag_Name) {
-        this.tag_Name = tag_Name;
+    public void setTagName(String tagName) {
+        this.tagName = tagName;
     }
 
-    public Timestamp getCreated_AtTime() {
-        return created_AtTime;
+    public Timestamp getCreatedAtTime() {
+        return createdAtTime;
     }
 
-    public void setCreated_AtTime(Timestamp created_AtTime) {
-        this.created_AtTime = created_AtTime;
+    public void setCreatedAtTime(Timestamp createdAtTime) {
+        this.createdAtTime = createdAtTime;
     }
 
-    public Timestamp getUpdated_AtTime() {
-        return updated_AtTime;
+    public Timestamp getUpdatedAtTime() {
+        return updatedAtTime;
     }
 
-    public void setUpdated_AtTime(Timestamp updated_AtTime) {
-        this.updated_AtTime = updated_AtTime;
+    public void setUpdatedAtTime(Timestamp updatedAtTime) {
+        this.updatedAtTime = updatedAtTime;
     }
+
+    public List<Task> getAllTasks() {
+        return allTasks;
+    }
+
+    public void setAllTasks(Task task) {
+        allTasks.add(task);
+    }
+
+    public User getmUsers() {
+        return mUsers;
+    }
+
+    public void setmUsers(User mUsers) {
+        this.mUsers = mUsers;
+    }
+
 }

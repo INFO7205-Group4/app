@@ -4,6 +4,8 @@ import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import org.hibernate.annotations.Type;
+
 import java.sql.Timestamp;
 
 @Entity
@@ -26,7 +28,7 @@ public class Attachment {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Task mTasks;
 
-    @Lob
+    @Type(type = "org.hibernate.type.BinaryType")
     @Column(name = "attachmentFile")
     private byte[] attachmentFile;
 
