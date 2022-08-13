@@ -79,9 +79,9 @@ public class AttachmentController {
 
     @NeedLogin
     @RequestMapping(value = "/task/attachment/{attachmentId}", method = RequestMethod.GET, produces = "application/json")
-    public ResponseEntity<byte[]> getFile(@PathVariable Integer taskId) {
+    public ResponseEntity<byte[]> getFile(@PathVariable Integer attachmentId) {
         try {
-            Optional<Attachment> attachmentOptional = Attachment.getFile(taskId);
+            Optional<Attachment> attachmentOptional = Attachment.getFile(attachmentId);
             if (!attachmentOptional.isPresent()) {
                 return ResponseEntity.notFound()
                         .build();

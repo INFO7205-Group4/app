@@ -56,7 +56,7 @@ public class AttachmentService implements AttachmentInterface {
                 return false;
             }
             List<Attachment> attachedFiles = attachmentRepository.getAttachmentByTaskId(taskId);
-            if (attachedFiles.size() == 5) {
+            if (attachedFiles.size() >= 5) {
                 logger.info("Cannot add more than 5 attachments");
                 return false;
             }
@@ -96,14 +96,14 @@ public class AttachmentService implements AttachmentInterface {
     @Transactional
     public List<Attachment> getAllAttachmentsForTask(String loggedInUser, Integer taskId) {
         try {
-            Task task = taskRepository.findByTaskId(taskId);
-            if (task == null) {
-                logger.info("Task not found");
-                return null;
-            }
             boolean status = validateStatus(taskId, loggedInUser);
             if (status == false) {
                 logger.info("Task does not belong to this user");
+                return null;
+            }
+            Task task = taskRepository.findByTaskId(taskId);
+            if (task == null) {
+                logger.info("Task not found");
                 return null;
             }
             List<Attachment> attachedFiles = attachmentRepository.getAttachmentByTaskId(taskId);
