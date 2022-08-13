@@ -13,15 +13,17 @@ import java.sql.Timestamp;
 public class Attachment {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer attachment_Id;
 
     private String attachmentName;
 
+    private String contentType;
+
     @Column(name = "attachedAtTime", nullable = true, unique = false)
     private Timestamp attachedAtTime;
 
-    private short attachmentSize;
+    private long attachmentSize;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "task_Id", nullable = false)
@@ -52,6 +54,14 @@ public class Attachment {
         this.attachmentName = attachmentName;
     }
 
+    public String getContentType() {
+        return contentType;
+    }
+
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
+    }
+
     public Timestamp getAttachedAtTime() {
         return attachedAtTime;
     }
@@ -60,12 +70,20 @@ public class Attachment {
         this.attachedAtTime = attachedAtTime;
     }
 
-    public short getAttachmentSize() {
+    public long getAttachmentSize() {
         return attachmentSize;
     }
 
-    public void setAttachment_Size(short attachmentSize) {
+    public void setAttachmentSize(long attachmentSize) {
         this.attachmentSize = attachmentSize;
+    }
+
+    public Task getmTasks() {
+        return mTasks;
+    }
+
+    public void setmTasks(Task mTasks) {
+        this.mTasks = mTasks;
     }
 
     public byte[] getAttachmentFile() {
@@ -75,13 +93,4 @@ public class Attachment {
     public void setAttachment_File(byte[] attachmentFile) {
         this.attachmentFile = attachmentFile;
     }
-
-    public Task getmTasks() {
-        return mTasks;
-    }
-
-    public void setmUsers(Task mTasks) {
-        this.mTasks = mTasks;
-    }
-
 }
