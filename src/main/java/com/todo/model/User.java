@@ -47,6 +47,10 @@ public class User {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Set<List> lists;
 
+    @OneToMany(mappedBy = "tUsers", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private Set<Tag> tags;
+
     public User() {
     }
 
@@ -136,5 +140,13 @@ public class User {
 
     public void setLists(Set<List> lists) {
         this.lists = lists;
+    }
+
+    public Set<Tag> getTags() {
+        return tags;
+    }
+
+    public void setTags(Set<Tag> tags) {
+        this.tags = tags;
     }
 }
