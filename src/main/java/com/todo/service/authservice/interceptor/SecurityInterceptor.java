@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.ResponseEntity.BodyBuilder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.method.HandlerMethod;
@@ -71,7 +70,7 @@ public class SecurityInterceptor extends HandlerInterceptorAdapter {
                     }
 
                 } catch (Exception e) {
-                    log.error("Error occured while authenticating request : " + e.getMessage());
+                    log.error("Error occurred while authenticating request : " + e.getMessage());
                     response.setStatus(HttpStatus.UNAUTHORIZED.value());
                 }
             }

@@ -2,29 +2,37 @@ package com.todo.model;
 
 import javax.persistence.*;
 
+import org.hibernate.annotations.Type;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.sql.Timestamp;
 
-//@Entity
-//@Table(name="Attachment")
+@Entity
+@Table(name = "Attachment")
 public class Attachment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer attachment_Id;
 
-    private String attachment_Name;
+    private String attachmentName;
 
-    @Column(name = "attached_at_time", nullable = true, unique = false)
-    private Timestamp attached_at_time;
+    @Column(name = "attachedAtTime", nullable = true, unique = false)
+    private Timestamp attachedAtTime;
 
-    private short Attachment_Size;
+    private short attachmentSize;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "task_Id", nullable = false)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private Task mTasks;
 
-    @Lob
-    @Column(name="Attachment_File")
-    private byte[] attachment_File;
+    @Type(type = "org.hibernate.type.BinaryType")
+    @Column(name = "attachmentFile")
+    private byte[] attachmentFile;
 
-    public Attachment(){
+    public Attachment() {
 
     }
 
@@ -36,35 +44,44 @@ public class Attachment {
         this.attachment_Id = attachment_Id;
     }
 
-    public String getAttachment_Name() {
-        return attachment_Name;
+    public String getAttachmentName() {
+        return attachmentName;
     }
 
-    public void setAttachment_Name(String attachment_Name) {
-        this.attachment_Name = attachment_Name;
+    public void setAttachmentName(String attachmentName) {
+        this.attachmentName = attachmentName;
     }
 
-    public Timestamp getAttached_AtTime() {
-        return attached_at_time;
+    public Timestamp getAttachedAtTime() {
+        return attachedAtTime;
     }
 
-    public void setAttached_AtTime(Timestamp attached_AtTime) {
-        this.attached_at_time = attached_AtTime;
+    public void setAttachedAtTime(Timestamp attachedAtTime) {
+        this.attachedAtTime = attachedAtTime;
     }
 
-    public short getAttachment_Size() {
-        return Attachment_Size;
+    public short getAttachmentSize() {
+        return attachmentSize;
     }
 
-    public void setAttachment_Size(short attachment_Size) {
-        Attachment_Size = attachment_Size;
+    public void setAttachment_Size(short attachmentSize) {
+        this.attachmentSize = attachmentSize;
     }
 
-    public byte[] getAttachment_File() {
-        return attachment_File;
+    public byte[] getAttachmentFile() {
+        return attachmentFile;
     }
 
-    public void setAttachment_File(byte[] attachment_File) {
-        this.attachment_File = attachment_File;
+    public void setAttachment_File(byte[] attachmentFile) {
+        this.attachmentFile = attachmentFile;
     }
+
+    public Task getmTasks() {
+        return mTasks;
+    }
+
+    public void setmUsers(Task mTasks) {
+        this.mTasks = mTasks;
+    }
+
 }

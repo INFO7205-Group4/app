@@ -1,12 +1,16 @@
 package com.todo.service;
 
+import com.todo.model.List;
+import com.todo.repositories.ListRepository;
+import com.todo.Interface.UserInterface;
+
+import com.todo.model.User;
+
+import com.todo.repositories.UserRepository;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.Base64;
-import java.util.List;
 import java.util.Properties;
-
-import javax.crypto.Cipher;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
@@ -18,27 +22,25 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
-
-import com.todo.repositories.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.todo.Interface.UserInterface;
-import com.todo.model.User;
-
 @Service
 public class UserService implements UserInterface {
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    ListRepository listRepository;
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     @Override
     public boolean registerUser(User newUser) {
         boolean validationStatus = validateInput(newUser);
         if (!validationStatus) {
+            logger.info("**********Input validation failed **********");
             return false;
         }
         User user = userRepository.findByEmailAddress(newUser.getEmailAddress());
@@ -76,10 +78,13 @@ public class UserService implements UserInterface {
             email = decryptEmailAddress(email);
             User user = userRepository.findByEmailAddress(email);
             if (user != null && email.equals(user.getEmailAddress()) && !user.getEmailValidated()) {
-
                 user.setEmailValidated(true);
                 user.setUpdated_AtTime(new Timestamp(System.currentTimeMillis()));
                 userRepository.save(user);
+                boolean defaultList = createDefaultList(user);
+                if (!defaultList) {
+                    logger.info("**********Exception while creating default list for user**********");
+                }
                 return true;
             }
             logger.info("**********User does not exist or email address is already validated **********");
@@ -93,16 +98,16 @@ public class UserService implements UserInterface {
     }
 
     @Override
-    public boolean resendValidationEmail(String email) {
+    public boolean resendValidationEmail(User email) {
         try {
-            User user = userRepository.findByEmailAddress(email);
-            if (user != null && email.equals(user.getEmailAddress()) && !user.getEmailValidated()
+            User user = userRepository.findByEmailAddress(email.getEmailAddress());
+            if (user != null && !user.getEmailValidated()
                     && user.getEmailSentTime().getTime() + 900000 <= System.currentTimeMillis()) {
                 user.setEmailValidated(false);
                 user.setUpdated_AtTime(new Timestamp(System.currentTimeMillis()));
                 user.setEmailSentTime(new Timestamp(System.currentTimeMillis()));
-                email = encryptEmailAddress(email);
-                String url = "http://localhost:8081/v1/validateEmail?email=" + email;
+                String encryptedEmail = encryptEmailAddress(email.getEmailAddress());
+                String url = "http://localhost:8081/v1/validateEmail?email=" + encryptedEmail;
                 boolean status = sendEmail(url, user.getEmailAddress());
                 if (status) {
                     userRepository.save(user);
@@ -181,6 +186,7 @@ public class UserService implements UserInterface {
                             + newEmailAddress;
                     boolean status = sendEmail(url, existingUser.getEmailAddress());
                     if (status) {
+                        existingUser.setConfirmationEmailValidated(false);
                         userRepository.save(existingUser);
                         return true;
                     }
@@ -250,7 +256,7 @@ public class UserService implements UserInterface {
     private String decryptEmailAddress(String email) {
         try {
             String decryptedEmail = "";
-            byte[] decodedBytes = Base64.getDecoder().decode(email);
+            byte[] decodedBytes = Base64.getUrlDecoder().decode(email);
             decryptedEmail = new String(decodedBytes);
             return decryptedEmail;
         } catch (Exception e) {
@@ -270,9 +276,11 @@ public class UserService implements UserInterface {
         if (!isValidEmailAddress(newUser.getEmailAddress())) {
             return false;
         }
-        if (newUser.getfName().isEmpty() || newUser.getfName().isBlank()
-                || newUser.getlName().isEmpty() || newUser.getlName().isBlank()
-                || newUser.getEmailAddress().isEmpty() || newUser.getEmailAddress().isBlank()) {
+        if (newUser.getfName() == null || newUser.getfName().isEmpty() || newUser.getfName().isBlank() ||
+                newUser.getlName() == null || newUser.getlName().isEmpty() || newUser.getlName().isBlank() ||
+                newUser.getEmailAddress() == null || newUser.getEmailAddress().isEmpty()
+                || newUser.getEmailAddress().isBlank() || newUser.getUserPassword() == null
+                || newUser.getUserPassword().isEmpty() || newUser.getUserPassword().isBlank()) {
             return false;
         }
         return true;
@@ -315,11 +323,28 @@ public class UserService implements UserInterface {
 
     private String encryptEmailAddress(String email) {
         try {
-            String encryptedEmail = Base64.getEncoder().encodeToString(email.getBytes());
+            String encryptedEmail = Base64.getUrlEncoder().encodeToString(email.getBytes());
             return encryptedEmail;
         } catch (Exception e) {
             e.printStackTrace();
             return "";
+        }
+    }
+
+    private boolean createDefaultList(User user) {
+        try {
+            List newList = new List();
+            newList.setListName("New List");
+            newList.setCreatedAtTime(new Timestamp(System.currentTimeMillis()));
+            newList.setUpdatedAtTime(new Timestamp(System.currentTimeMillis()));
+            newList.setmUsers(user);
+            listRepository.save(newList);
+            logger.info("**********Default List created successfully **********");
+            return true;
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            logger.info("**********Exception while creating the default list! **********");
+            return false;
         }
     }
 
