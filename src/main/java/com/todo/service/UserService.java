@@ -98,16 +98,16 @@ public class UserService implements UserInterface {
     }
 
     @Override
-    public boolean resendValidationEmail(String email) {
+    public boolean resendValidationEmail(User email) {
         try {
-            User user = userRepository.findByEmailAddress(email);
-            if (user != null && email.equals(user.getEmailAddress()) && !user.getEmailValidated()
+            User user = userRepository.findByEmailAddress(email.getEmailAddress());
+            if (user != null && !user.getEmailValidated()
                     && user.getEmailSentTime().getTime() + 900000 <= System.currentTimeMillis()) {
                 user.setEmailValidated(false);
                 user.setUpdated_AtTime(new Timestamp(System.currentTimeMillis()));
                 user.setEmailSentTime(new Timestamp(System.currentTimeMillis()));
-                email = encryptEmailAddress(email);
-                String url = "http://localhost:8081/v1/validateEmail?email=" + email;
+                String encryptedEmail = encryptEmailAddress(email.getEmailAddress());
+                String url = "http://localhost:8081/v1/validateEmail?email=" + encryptedEmail;
                 boolean status = sendEmail(url, user.getEmailAddress());
                 if (status) {
                     userRepository.save(user);

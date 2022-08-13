@@ -68,12 +68,10 @@ public class UserController {
         }
     }
 
-    @NeedLogin
     @RequestMapping(value = "/resendLink", method = RequestMethod.GET, produces = "application/json")
-    public ResponseEntity<User> resendValidationLink(HttpServletRequest request) {
+    public ResponseEntity<User> resendValidationLink(@RequestBody User user) {
         try {
-            String loggedInUser = AuthService.getUserName(request);
-            boolean status = User.resendValidationEmail(loggedInUser);
+            boolean status = User.resendValidationEmail(user);
             if (status) {
                 return ResponseEntity.status(HttpStatus.OK).body(null);
             }
