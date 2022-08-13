@@ -5,9 +5,13 @@ import java.util.List;
 import java.util.Map;
 
 public interface TaskInterface {
-  boolean createTask(Map<String, String> taskData);
+  boolean createTask(String loggedInUser, Map<String, String> taskData);
 
-  List<Task> getTasksForParticularUser(Integer listId);
+  List<Task> getTasksForParticularUser(String loggedInUser, Integer listId);
 
-  boolean deleteTask(Task task);
+  boolean deleteTask(String loggedInUser, Task task);
+
+  boolean updateTask(String loggedInUser, Task task);
+
+  boolean moveTask(String loggedInUser, Map<String, Integer> task);
 }

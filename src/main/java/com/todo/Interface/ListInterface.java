@@ -6,9 +6,9 @@ public interface ListInterface {
 
   boolean createList(List list, String email);
 
-  boolean deleteList(List newList);
+  boolean deleteList(String email, List list);
 
-  boolean updateList(List updatedList);
+  boolean updateList(String email, List updatedList);
 
   java.util.List<List> getAllListForParticularUser(String loggedInUser);
 

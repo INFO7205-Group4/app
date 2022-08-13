@@ -67,9 +67,10 @@ public class ListController {
 
   @NeedLogin
   @RequestMapping(value = "/updateList", method = RequestMethod.PATCH, produces = "application/json")
-  public ResponseEntity<List> updateList(@RequestBody List updatedList) {
+  public ResponseEntity<List> updateList(HttpServletRequest request, @RequestBody List updatedList) {
     try {
-      boolean status = List.updateList(updatedList);
+      String loggedInUser = AuthService.getUserName(request);
+      boolean status = List.updateList(loggedInUser, updatedList);
       if (status) {
         return ResponseEntity.status(HttpStatus.OK).body(updatedList);
       }
@@ -84,9 +85,10 @@ public class ListController {
 
   @NeedLogin
   @RequestMapping(value = "/deleteList", method = RequestMethod.DELETE, produces = "application/json")
-  public ResponseEntity<List> deleteList(@RequestBody List newList) {
+  public ResponseEntity<List> deleteList(HttpServletRequest request, @RequestBody List newList) {
     try {
-      boolean status = List.deleteList(newList);
+      String loggedInUser = AuthService.getUserName(request);
+      boolean status = List.deleteList(loggedInUser, newList);
       if (status) {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
       }

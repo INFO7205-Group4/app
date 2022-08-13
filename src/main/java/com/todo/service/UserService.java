@@ -186,6 +186,7 @@ public class UserService implements UserInterface {
                             + newEmailAddress;
                     boolean status = sendEmail(url, existingUser.getEmailAddress());
                     if (status) {
+                        existingUser.setConfirmationEmailValidated(false);
                         userRepository.save(existingUser);
                         return true;
                     }
@@ -255,7 +256,7 @@ public class UserService implements UserInterface {
     private String decryptEmailAddress(String email) {
         try {
             String decryptedEmail = "";
-            byte[] decodedBytes = Base64.getDecoder().decode(email);
+            byte[] decodedBytes = Base64.getUrlDecoder().decode(email);
             decryptedEmail = new String(decodedBytes);
             return decryptedEmail;
         } catch (Exception e) {
@@ -322,7 +323,7 @@ public class UserService implements UserInterface {
 
     private String encryptEmailAddress(String email) {
         try {
-            String encryptedEmail = Base64.getEncoder().encodeToString(email.getBytes());
+            String encryptedEmail = Base64.getUrlEncoder().encodeToString(email.getBytes());
             return encryptedEmail;
         } catch (Exception e) {
             e.printStackTrace();

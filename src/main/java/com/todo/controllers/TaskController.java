@@ -34,7 +34,8 @@ public class TaskController {
     public ResponseEntity<Map<String, String>> createTasks(@RequestBody Map<String, String> taskData,
             HttpServletRequest request) {
         try {
-            boolean status = Task.createTask(taskData);
+            String loggedInUser = AuthService.getUserName(request);
+            boolean status = Task.createTask(loggedInUser, taskData);
             if (status) {
                 return ResponseEntity.status(HttpStatus.CREATED).body(taskData);
             }
@@ -49,9 +50,14 @@ public class TaskController {
 
     @NeedLogin
     @RequestMapping(value = "/list/task", method = RequestMethod.GET, produces = "application/json")
-    public ResponseEntity<List<Task>> getTasksForParticularUser(@RequestBody Integer listId) {
+    public ResponseEntity<List<Task>> getTasksForParticularUser(HttpServletRequest request,
+            @RequestBody Integer listId) {
         try {
-            java.util.List<Task> tasks = Task.getTasksForParticularUser(listId);
+            String loggedInUser = AuthService.getUserName(request);
+            java.util.List<Task> tasks = Task.getTasksForParticularUser(loggedInUser, listId);
+            if (tasks == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            }
             return ResponseEntity.status(HttpStatus.OK).body(tasks);
         } catch (Exception e) {
             logger.info("**********Exception while retrieving Tasks**********");
@@ -62,9 +68,10 @@ public class TaskController {
 
     @NeedLogin
     @RequestMapping(value = "list/deleteTask", method = RequestMethod.DELETE, produces = "application/json")
-    public ResponseEntity<com.todo.model.List> deleteTask(@RequestBody com.todo.model.Task task) {
+    public ResponseEntity<com.todo.model.List> deleteTask(HttpServletRequest request, @RequestBody Task task) {
         try {
-            boolean status = Task.deleteTask(task);
+            String loggedInUser = AuthService.getUserName(request);
+            boolean status = Task.deleteTask(loggedInUser, task);
             if (status) {
                 return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
             }
@@ -75,4 +82,39 @@ public class TaskController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
     }
+
+    @NeedLogin
+    @RequestMapping(value = "list/updateTask", method = RequestMethod.PATCH, produces = "application/json")
+    public ResponseEntity<String> updateUser(HttpServletRequest request, @RequestBody Task updatedTask) {
+        try {
+            String loggedInUser = AuthService.getUserName(request);
+            boolean status = Task.updateTask(loggedInUser, updatedTask);
+            if (status) {
+                return ResponseEntity.status(HttpStatus.OK).body(null);
+            }
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        } catch (Exception e) {
+            logger.info("**********Exception while updating task details **********");
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+    }
+
+    @NeedLogin
+    @RequestMapping(value = "list/moveTask", method = RequestMethod.PATCH, produces = "application/json")
+    public ResponseEntity<String> moveUser(HttpServletRequest request, @RequestBody Map<String, Integer> updatedTask) {
+        try {
+            String loggedInUser = AuthService.getUserName(request);
+            boolean status = Task.moveTask(loggedInUser, updatedTask);
+            if (status) {
+                return ResponseEntity.status(HttpStatus.OK).body(null);
+            }
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        } catch (Exception e) {
+            logger.info("**********Exception while moving task  **********");
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+    }
+
 }

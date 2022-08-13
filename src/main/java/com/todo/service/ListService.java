@@ -42,21 +42,26 @@ public class ListService implements ListInterface {
   }
 
   @Override
-  public boolean deleteList(List list) {
+  public boolean deleteList(String loggedInUser, List list) {
     try {
       List existingList = listRepository.findByListId(list.getListId());
       if (existingList != null) {
-        java.util.List<List> totalList = getAllListForParticularUser(existingList.getmUsers().getEmailAddress());
-        if (totalList.size() > 1) {
-          listRepository.delete(existingList);
-        } else if (totalList.size() == 1) {
-          existingList.setListName("New List");
-          existingList.setCreatedAtTime(new Timestamp(System.currentTimeMillis()));
-          existingList.setUpdatedAtTime(new Timestamp(System.currentTimeMillis()));
-          listRepository.save(existingList);
+        java.util.List<List> totalList = getAllListForParticularUser(loggedInUser);
+        if (totalList.contains(existingList)) {
+          if (totalList.size() > 1) {
+            listRepository.delete(existingList);
+          } else if (totalList.size() == 1) {
+            existingList.setListName("New List");
+            existingList.setCreatedAtTime(new Timestamp(System.currentTimeMillis()));
+            existingList.setUpdatedAtTime(new Timestamp(System.currentTimeMillis()));
+            listRepository.save(existingList);
+          }
+          logger.info("**********List deleted successfully **********");
+          return true;
+        } else {
+          logger.info("**********This list does not exist for this user **********");
+          return false;
         }
-        logger.info("**********List deleted successfully **********");
-        return true;
       }
       logger.info("**********List you are trying to delete does not exist **********");
       return false;
@@ -68,19 +73,38 @@ public class ListService implements ListInterface {
   }
 
   @Override
-  public boolean updateList(List updatedList) {
+  public boolean updateList(String loggedInUser, List updatedList) {
     try {
+      if (updatedList.getListName() == null || updatedList.getListName().isEmpty()
+          || updatedList.getListName().equals("")) {
+        logger.info("**********List name cannot be null **********");
+        return false;
+      }
+      if (updatedList.getListName().length() > 20) {
+        logger.info("**********List name cannot be more than 20 characters **********");
+        return false;
+      }
+      if (updatedList.getListId() == null || updatedList.getListId().equals("")) {
+        logger.info("**********List id cannot be null **********");
+        return false;
+      }
       List existingList = listRepository.findByListId(updatedList.getListId());
       if (existingList != null) {
-        updatedList.setCreatedAtTime(existingList.getCreatedAtTime());
-        if (existingList.getListName().equals(updatedList.getListName())) {
+        java.util.List<List> totalList = getAllListForParticularUser(loggedInUser);
+        if (totalList.contains(existingList)) {
+          if (existingList.getListName().equals(updatedList.getListName())) {
+            return false;
+          }
+          updatedList.setCreatedAtTime(existingList.getCreatedAtTime());
+          updatedList.setUpdatedAtTime(new Timestamp(System.currentTimeMillis()));
+          updatedList.setmUsers(existingList.getmUsers());
+          listRepository.save(updatedList);
+          logger.info("**********List updated successfully **********");
+          return true;
+        } else {
+          logger.info("**********This list does not exist for this user **********");
           return false;
         }
-        updatedList.setUpdatedAtTime(new Timestamp(System.currentTimeMillis()));
-        updatedList.setmUsers(existingList.getmUsers());
-        listRepository.save(updatedList);
-        logger.info("**********List updated successfully **********");
-        return true;
       }
       logger.info("**********List you are trying to update does not exist **********");
       return false;
