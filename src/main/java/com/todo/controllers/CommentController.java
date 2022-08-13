@@ -34,17 +34,18 @@ public class CommentController {
 
   @NeedLogin
   @RequestMapping(value = "/task/comment", method = RequestMethod.POST, produces = "application/json")
-  public ResponseEntity<Object> createComment(@RequestBody Comment comment, @RequestParam Integer taskId) {
+  public ResponseEntity<Comment> createComment(@RequestBody Comment comment, @RequestParam("taskId")  Integer taskId) {
     try {
       if(String.valueOf(taskId).equals(null) && String.valueOf(taskId).equals("")){
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Empty or null value for TaskId");
+        logger.info("**********No Task ID value **********");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
       }
       if(comment.getComment() == null || comment.getComment().equals("")){
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Nothing to create");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
       }
-      boolean status = commentInterface.create(comment);
-      if (status) {
-        return new ResponseEntity<Object>(comment, HttpStatus.CREATED);
+      Comment status = commentInterface.create(comment, taskId);
+      if (status != null) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(status);
       }
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
 
@@ -73,14 +74,23 @@ public class CommentController {
 
   @NeedLogin
   @RequestMapping(value = "/updateComment", method = RequestMethod.PATCH, produces = "application/json")
-  public ResponseEntity<Object> updateComment(@RequestBody Comment updatedComment, @RequestParam Integer taskId) {
+  public ResponseEntity<Object> updateComment(@RequestBody Comment updatedComment, @RequestParam("taskId") Integer taskId) {
     try {
       if(String.valueOf(taskId).equals(null) && String.valueOf(taskId).equals("")){
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Empty or null value for TaskId");
+        logger.info("**********No Task ID value **********");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
       }
-      boolean status = commentInterface.updateComment(updatedComment, taskId);
-      if (status) {
-        return ResponseEntity.status(HttpStatus.OK).body(updatedComment);
+      if(updatedComment.getComment() == null){
+        logger.info("**********No Comment ID value **********");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+      }
+      if(updatedComment.getComment() == null){
+        logger.info("**********No Comment null value**********");
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Nothing to update");
+      }
+      Comment status = commentInterface.updateComment(updatedComment, taskId);
+      if (status != null) {
+        return ResponseEntity.status(HttpStatus.OK).body(status);
       }
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
     } catch (Exception e) {
@@ -93,14 +103,15 @@ public class CommentController {
 
   @NeedLogin
   @RequestMapping(value = "/deleteComment", method = RequestMethod.DELETE, produces = "application/json")
-  public ResponseEntity<String> deleteComment(@RequestBody Integer commentId) {
+  public ResponseEntity<String> deleteComment(@RequestParam("commentId") Integer commentId) {
     try {
       if(String.valueOf(commentId) == null || String.valueOf(commentId).equals("")){
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Empty or null value for commentId");
+        logger.info("**********Empty or null value for commentId **********");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
       }
       boolean status = commentInterface.deleteComment(commentId);
       if (status) {
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Deleted successfully");
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Deleted successfully!");
       }
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
     } catch (Exception e) {

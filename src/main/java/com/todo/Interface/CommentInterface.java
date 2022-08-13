@@ -6,11 +6,11 @@ import javax.persistence.criteria.CriteriaBuilder.In;
 
 public interface CommentInterface {
 
-  boolean create(Comment comment);
+  Comment create(Comment comment, Integer taskId);
 
   List<Comment> getComment(Integer taskId);
 
-  boolean updateComment(Comment updatedComment, Integer taskId);
+  Comment updateComment(Comment updatedComment, Integer taskId);
 
   boolean deleteComment(Integer commentId);
 }

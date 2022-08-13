@@ -10,9 +10,9 @@ public class Comment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String Comment_Id;
+    private Integer comment_Id;
 
-    private String Comment;
+    private String comment;
 
     private Timestamp created_AtTime;
 
@@ -23,20 +23,21 @@ public class Comment {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Task cTask;
 
-    public String getComment_Id() {
-        return Comment_Id;
+
+    public Integer getComment_Id() {
+        return comment_Id;
     }
 
-    public void setComment_Id(String comment_Id) {
-        Comment_Id = comment_Id;
+    public void setComment_Id(Integer comment_Id) {
+        this.comment_Id = comment_Id;
     }
 
     public String getComment() {
-        return Comment;
+        return comment;
     }
 
     public void setComment(String comment) {
-        Comment = comment;
+        this.comment = comment;
     }
 
     public Timestamp getCreated_AtTime() {
