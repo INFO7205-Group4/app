@@ -88,7 +88,7 @@ public class CommentController {
                 logger.info("**********No Comment  value **********");
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
             }
-            if (updatedComment.getComment_Id() == null) {
+            if (updatedComment.getComment_Id() == null || String.valueOf(updatedComment.getComment_Id()).equals("")) {
                 logger.info("**********No Comment ID value**********");
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
             }
@@ -115,7 +115,7 @@ public class CommentController {
             }
             boolean status = commentInterface.deleteComment(commentId);
             if (status) {
-                return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Deleted successfully!");
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
             }
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         } catch (Exception e) {

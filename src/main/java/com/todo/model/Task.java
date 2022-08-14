@@ -21,7 +21,16 @@ public class Task {
     private Timestamp updatedAtTime;
 
     @OneToMany(mappedBy = "mTasks", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Set<Attachment> attachments;
+
+    @OneToMany(mappedBy = "cTask", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private Set<Comment> comments;
+
+    @OneToMany(mappedBy = "rTask", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private Set<Reminder> reminders;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "list_id", nullable = false)
@@ -44,8 +53,8 @@ public class Task {
         return mList;
     }
 
-    public void setmList(List list) {
-        this.mList = list;
+    public void setmList(List mlist) {
+        this.mList = mlist;
     }
 
     public Integer getTask_Id() {
@@ -111,4 +120,9 @@ public class Task {
     public void setAttachment(Set<Attachment> attachments) {
         this.attachments = attachments;
     }
+
+    // @ManyToMany(fetch = FetchType.LAZY)
+    // @JoinTable(name = "Tag", joinColumns = @JoinColumn(name = "task_Id"),
+    // inverseJoinColumns = @JoinColumn(name = "tag_Id"))
+    // public Set<Tag> tags;
 }

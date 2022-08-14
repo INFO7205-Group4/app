@@ -1,56 +1,83 @@
 package com.todo.model;
 
-import javax.persistence.*;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.sql.Timestamp;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
-//@Entity
-//@Table(name="Tag")
+@Entity
+@Table(name = "Tag")
 public class Tag {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private String tag_Id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer tag_Id;
 
-    private String tag_Name;
+    private String tagName;
 
-    private Timestamp created_AtTime;
+    private Timestamp createdAtTime;
 
-    private Timestamp updated_AtTime;
+    private Timestamp updatedAtTime;
 
-    public Tag(){
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "userId", nullable = false)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private User tUsers;
+
+    public Tag() {
 
     }
 
-    public String getTag_Id() {
+    public Integer getTag_Id() {
         return tag_Id;
     }
 
-    public void setTag_Id(String tag_Id) {
+    public void setTag_Id(Integer tag_Id) {
         this.tag_Id = tag_Id;
     }
 
-    public String getTag_Name() {
-        return tag_Name;
+    public String getTagName() {
+        return tagName;
     }
 
-    public void setTag_Name(String tag_Name) {
-        this.tag_Name = tag_Name;
+    public void setTagName(String tagName) {
+        this.tagName = tagName;
     }
 
-    public Timestamp getCreated_AtTime() {
-        return created_AtTime;
+    public Timestamp getCreatedAtTime() {
+        return createdAtTime;
     }
 
-    public void setCreated_AtTime(Timestamp created_AtTime) {
-        this.created_AtTime = created_AtTime;
+    public void setCreatedAtTime(Timestamp createdAtTime) {
+        this.createdAtTime = createdAtTime;
     }
 
-    public Timestamp getUpdated_AtTime() {
-        return updated_AtTime;
+    public Timestamp getUpdatedAtTime() {
+        return updatedAtTime;
     }
 
-    public void setUpdated_AtTime(Timestamp updated_AtTime) {
-        this.updated_AtTime = updated_AtTime;
+    public void setUpdatedAtTime(Timestamp updatedAtTime) {
+        this.updatedAtTime = updatedAtTime;
     }
+
+    public User gettUsers() {
+        return tUsers;
+    }
+
+    public void settUsers(User tUsers) {
+        this.tUsers = tUsers;
+    }
+
+    // @ManyToMany(fetch = FetchType.LAZY)
+    // @JoinTable(name = "Task", joinColumns = @JoinColumn(name = "tag_Id"),
+    // inverseJoinColumns = @JoinColumn(name = "task_Id"))
+
+    // public Set<Task> tasks;
+
 }
