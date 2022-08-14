@@ -53,7 +53,7 @@ public class Scheduler {
         UserRepository userRepository;
         private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
-        @Scheduled(cron = "0 0 * * *")
+        @Scheduled(cron = "0 0 12 * * ?")
         public void scheduleTask() {
                 try {
                         allUsers();
