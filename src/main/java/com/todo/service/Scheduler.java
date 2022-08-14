@@ -1,12 +1,11 @@
 package com.todo.service;
 
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import java.time.format.DateTimeFormatter;
-
-import java.util.ArrayList;
 
 import java.util.List;
 
@@ -28,8 +27,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import com.todo.model.Reminder;
 import com.todo.model.Task;
+import com.todo.model.User;
 import com.todo.repositories.ListRepository;
 import com.todo.repositories.ReminderRepository;
 import com.todo.repositories.TaskRepository;
@@ -54,76 +53,50 @@ public class Scheduler {
         UserRepository userRepository;
         private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
-        // Method
-        // Cron Job runs every 2 hours
-        // @Scheduled(cron = "0 0 */2 * * ?")
-        // // @Scheduled(fixedRate = 120000)
-        // public void scheduleTask() {
-        // try {
-        // DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        // LocalDate now = LocalDate.now();
-        // java.util.List<Reminder> allReminders = allReminders();
-        // List<Reminder> filteredReminders = new ArrayList<>();
-        // List<Task> allTasks = new ArrayList<>();
-        // List<Task> filteredTasks = new ArrayList<>();
-        // List<com.todo.model.List> allLists = new ArrayList<>();
-        // List<com.todo.model.List> filteredList = new ArrayList<>();
-        // List<com.todo.model.User> allUsers = new ArrayList<>();
-        // List<com.todo.model.User> filteredUser = new ArrayList<>();
+        @Scheduled(cron = "0 0 * * *")
+        public void scheduleTask() {
+                try {
+                        allUsers();
+                } catch (Exception e) {
+                        logger.error("Error in Scheduler", e);
+                }
+        }
 
-        // for (Reminder reminder : allReminders) {
-        // LocalDateTime localDateTime =
-        // reminder.getReminderDateTime().toLocalDateTime();
-        // logger.info("Reminder date" + dtf.format(localDateTime));
+        private void allUsers() {
+                try {
+                        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                        LocalDate now = LocalDate.now();
+                        List<User> allUsers = userRepository.findAll();
+                        for (User user : allUsers) {
+                                List<com.todo.model.List> allListForAUser = listRepository.findList(user.getUserId());
+                                for (com.todo.model.List list : allListForAUser) {
+                                        List<Task> allTaskInaList = taskRepository.getTasks(list.getListId());
+                                        for (Task task : allTaskInaList) {
+                                                List<Timestamp> allReminders = reminderRepository
+                                                                .getReminderDateTimeByTaskId(task.getTask_Id());
+                                                for (Timestamp reminder : allReminders) {
+                                                        LocalDateTime localDateTime = reminder.toLocalDateTime();
+                                                        logger.info("Reminder date" + dtf.format(localDateTime));
+                                                        logger.info("Today date" + now.toString());
+                                                        if (dtf.format(now).equals(dtf.format(localDateTime))) {
+                                                                String content = task.getTaskName();
+                                                                String email = user.getEmailAddress();
+                                                                try {
+                                                                        sendEmail(content, email);
+                                                                } catch (MessagingException | IOException e) {
+                                                                        e.printStackTrace();
+                                                                }
+                                                        }
+                                                }
 
-        // logger.info("Today date" + now.toString());
-        // if (dtf.format(now).equals(dtf.format(localDateTime))) {
-        // filteredReminders.add(reminder);
-        // }
-        // }
-        // if (filteredReminders.size() > 0) {
-        // allTasks = taskRepository.findAll();
-        // }
-        // for (Reminder reminder : filteredReminders) {
-        // if (allTasks.contains(reminder.getrTask())) {
-        // filteredTasks.add(reminder.getrTask());
-        // }
-        // }
-        // if (filteredTasks.size() > 0) {
-        // allLists = listRepository.findAll();
-        // }
-        // for (Task task : filteredTasks) {
-        // if (allLists.contains(task.getmList())) {
-        // filteredList.add(task.getmList());
-        // }
-        // }
-        // if (filteredList.size() > 0) {
-        // allUsers = userRepository.findAll();
-        // }
-        // for (com.todo.model.List list : filteredList) {
-        // if (allUsers.contains(list.getmUsers())) {
-        // filteredUser.add(list.getmUsers());
-        // }
-        // }
-        // if (filteredTasks.size() == filteredUser.size()) {
-        // for (int i = 0; i < filteredReminders.size(); i++) {
-        // try {
-        // String content = filteredTasks.get(i).getTaskName();
-        // String email = filteredUser.get(i).getEmailAddress();
-        // sendEmail(content, email);
-        // logger.info("Email sent to " + filteredUser.get(i).getEmailAddress());
-        // } catch (MessagingException | IOException e) {
-        // e.printStackTrace();
-        // }
-        // }
-        // }
-        // } catch (Exception e) {
-        // logger.error("Error in Scheduler", e);
-        // }
-        // }
+                                        }
+                                }
 
-        private List<Reminder> allReminders() {
-                return reminderRepository.findAll();
+                        }
+                } catch (Exception e) {
+                        logger.error("Error in Scheduler", e);
+                }
+
         }
 
         private boolean sendEmail(String url, String email) throws AddressException, MessagingException, IOException {
@@ -144,7 +117,7 @@ public class Scheduler {
                         msg.setFrom(new InternetAddress("huskydevportal@gmail.com", false));
 
                         msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(email));
-                        msg.setSubject("Verification Email Link Todo App");
+                        msg.setSubject("Reminder Email Todo App");
                         msg.setContent(url, "text/html");
 
                         MimeBodyPart messageBodyPart = new MimeBodyPart();
