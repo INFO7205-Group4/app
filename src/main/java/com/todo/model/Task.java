@@ -3,6 +3,7 @@ package com.todo.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Set;
 
 @Entity
@@ -19,23 +20,21 @@ public class Task {
     private short taskState;
     private Timestamp createdAtTime;
     private Timestamp updatedAtTime;
-    private String[] tags;
+    private ArrayList<String> tags;
 
-    public String[] getTags() {
+    public ArrayList<String> getTags() {
         return tags;
     }
 
-    public void setTags(String tagId) {
-        if (this.tags == null) {
-            this.tags = new String[1];
-            this.tags[0] = tagId;
-        } else {
-            String[] temp = new String[this.tags.length + 1];
-            for (int i = 0; i < this.tags.length; i++) {
-                temp[i] = this.tags[i];
+    public void setTags(String tagId, boolean add, ArrayList<String> tags) {
+        if (add) {
+            if (this.tags == null) {
+                this.tags = new ArrayList<>();
             }
-            temp[this.tags.length] = tagId;
-            this.tags = temp;
+            this.tags.add(tagId);
+        } else {
+            this.tags = new ArrayList<>();
+            this.tags = tags;
         }
     }
 

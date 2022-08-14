@@ -10,8 +10,6 @@ import com.todo.repositories.TaskRepository;
 import com.todo.repositories.UserRepository;
 import java.sql.Timestamp;
 import java.util.List;
-
-import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -111,13 +109,12 @@ public class TagService implements TagInterface {
             }
             for (com.todo.model.List eachList : listRepository.findList(tag.gettUsers().getUserId())) {
                 for (Task eachTask : taskRepository.getTasks(eachList.getListId())) {
-                    for (int i = 0; i < eachTask.getTags().length; i++) {
-                        if (eachTask.getTags()[i].equals(String.valueOf(tag.getTag_Id()))) {
-                            ArrayUtils.remove(eachTask.getTags(), i);
+                    for (int i = 0; i < eachTask.getTags().size(); i++) {
+                        if (eachTask.getTags().contains(String.valueOf(tagId))) {
+                            eachTask.getTags().remove(i);
+                            taskRepository.save(eachTask);
                         }
                     }
-                    taskRepository.save(eachTask);
-
                 }
             }
             tagRepository.delete(tag);
@@ -153,7 +150,7 @@ public class TagService implements TagInterface {
                 logger.info("**********Task does not exist **********");
                 return false;
             }
-            if (task.getTags() != null && task.getTags().length >= 10) {
+            if (task.getTags() != null && task.getTags().size() >= 10) {
                 logger.info("**********Tag limit reached **********");
                 return false;
             }
@@ -165,7 +162,7 @@ public class TagService implements TagInterface {
                     }
                 }
             }
-            task.setTags(String.valueOf(tagId));
+            task.setTags(String.valueOf(tagId), true, task.getTags());
             taskRepository.save(task);
             logger.info("**********Tag added to task successfully **********");
             return true;
@@ -181,7 +178,8 @@ public class TagService implements TagInterface {
     @Override
     public boolean deleteTagFromTask(String tagId, String taskId, String loggedInUser) {
         User user = userRepository.findByEmailAddress(loggedInUser);
-        boolean status = getAllListForParticularUser(loggedInUser, Integer.parseInt(taskId));
+        boolean status = getAllListForParticularUser(loggedInUser,
+                Integer.parseInt(taskId));
         if (!status) {
             logger.info("**********Task does not belong to this user **********");
             return false;
@@ -201,15 +199,17 @@ public class TagService implements TagInterface {
             return false;
         }
         if (task.getTags() != null) {
-            for (int i = 0; i < task.getTags().length; i++) {
-                if (task.getTags()[i].equals(tagId)) {
-                    ArrayUtils.remove(task.getTags(), i);
-                }
-
-                // this needs to be fixed
+            if (task.getTags().size() == 0) {
+                logger.info("**********No tags to delete **********");
+                return false;
             }
-            taskRepository.save(task);
-            logger.info("**********Tag deleted from task successfully **********");
+            for (int i = 0; i < task.getTags().size(); i++) {
+                if (task.getTags().contains(String.valueOf(tagId))) {
+                    task.getTags().remove(i);
+                    taskRepository.save(task);
+                    logger.info("**********Tag deleted from task successfully **********");
+                }
+            }
             return true;
         }
         logger.info("**********Tag does not exist **********");
