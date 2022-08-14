@@ -105,8 +105,9 @@ public class TagController {
     public ResponseEntity<Tag> attachTagToTask(HttpServletRequest request, @RequestBody Map<String, String> taskData) {
         try {
             if (taskData.get("taskId") == null || taskData.get("taskId").isEmpty()
-                    || taskData.get("taskId").isBlank()) {
-                logger.info("**********Task Name is Required**********");
+                    || taskData.get("taskId").isBlank() || taskData.get("tagId") == null
+                    || taskData.get("tagId").isEmpty()) {
+                logger.info("**********Task is Required**********");
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
             }
             String loggedInUser = AuthService.getUserName(request);
@@ -118,6 +119,32 @@ public class TagController {
 
         } catch (Exception e) {
             logger.info("**********Exception while creating New Tag**********");
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+    }
+
+    @NeedLogin
+    @RequestMapping(value = "/removeTagFromTask", method = RequestMethod.DELETE, produces = "application/json")
+    public ResponseEntity<Tag> removeTagFromTask(HttpServletRequest request,
+            @RequestBody Map<String, String> taskData) {
+        try {
+            if (taskData.get("taskId") == null || taskData.get("taskId").isEmpty()
+                    || taskData.get("taskId").isBlank() || taskData.get("tagId") == null
+                    || taskData.get("tagId").isEmpty()) {
+                logger.info("**********Task is Required**********");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            }
+            String loggedInUser = AuthService.getUserName(request);
+            boolean status = tagInterface.deleteTagFromTask(taskData.get("tagId"), taskData.get("taskId"),
+                    loggedInUser);
+            if (status) {
+                return ResponseEntity.status(HttpStatus.CREATED).body(null);
+            }
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+
+        } catch (Exception e) {
+            logger.info("**********Exception while deleting  Tag**********");
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }

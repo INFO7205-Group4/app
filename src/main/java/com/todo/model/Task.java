@@ -3,6 +3,7 @@ package com.todo.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Set;
 
 @Entity
@@ -19,6 +20,23 @@ public class Task {
     private short taskState;
     private Timestamp createdAtTime;
     private Timestamp updatedAtTime;
+    private ArrayList<String> tags;
+
+    public ArrayList<String> getTags() {
+        return tags;
+    }
+
+    public void setTags(String tagId, boolean add, ArrayList<String> tags) {
+        if (add) {
+            if (this.tags == null) {
+                this.tags = new ArrayList<>();
+            }
+            this.tags.add(tagId);
+        } else {
+            this.tags = new ArrayList<>();
+            this.tags = tags;
+        }
+    }
 
     @OneToMany(mappedBy = "mTasks", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)

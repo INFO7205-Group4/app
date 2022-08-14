@@ -169,4 +169,25 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
     }
+
+    @RequestMapping(value = "/login", method = RequestMethod.GET, produces = "application/json")
+    public ResponseEntity<String> autoLogin(HttpServletRequest request) {
+        final String AUTH_HEADER_PARAMETER_AUTHORIZATION = "authorization";
+        String basicAuthHeaderValue = request.getHeader(AUTH_HEADER_PARAMETER_AUTHORIZATION);
+        ResponseEntity response = AuthService.validateBasicAuthentication(basicAuthHeaderValue);
+        if (response.getStatusCode() == HttpStatus.OK) {
+            logger.info("**********User logged in successfully**********");
+            return ResponseEntity.status(HttpStatus.OK).body(null);
+        }
+        if (response.getStatusCode() == HttpStatus.UNAUTHORIZED) {
+            logger.info("**********User not logged in**********");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+        if (response.getStatusCode() == HttpStatus.FORBIDDEN) {
+            logger.info("**********User not logged in**********");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+        }
+        logger.info("**********User not logged in**********");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+    }
 }
