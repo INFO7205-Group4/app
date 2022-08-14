@@ -10,6 +10,8 @@ import com.todo.repositories.TaskRepository;
 import com.todo.repositories.UserRepository;
 import java.sql.Timestamp;
 import java.util.List;
+
+import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -107,11 +109,22 @@ public class TagService implements TagInterface {
                 logger.info("**********This tag does not belong to this user **********");
                 return false;
             }
+            for (com.todo.model.List eachList : listRepository.findList(tag.gettUsers().getUserId())) {
+                for (Task eachTask : taskRepository.getTasks(eachList.getListId())) {
+                    for (int i = 0; i < eachTask.getTags().length; i++) {
+                        if (eachTask.getTags()[i].equals(String.valueOf(tag.getTag_Id()))) {
+                            ArrayUtils.remove(eachTask.getTags(), i);
+                        }
+                    }
+                    taskRepository.save(eachTask);
+
+                }
+            }
             tagRepository.delete(tag);
             logger.info("**********Tag deleted successfully **********");
             return true;
         } catch (Exception exception) {
-            logger.info("**********Exception while deleting Tag **********");
+            logger.info("**********Exception while deleting tag **********");
             exception.printStackTrace();
             return false;
         }
@@ -121,11 +134,12 @@ public class TagService implements TagInterface {
     public boolean taskTag(String tagId, String taskId, String loggedInUser) {
         try {
             User user = userRepository.findByEmailAddress(loggedInUser);
-            boolean status = getAllListForParticularUser(loggedInUser, Integer.valueOf(taskId));
+            boolean status = getAllListForParticularUser(loggedInUser, Integer.parseInt(taskId));
             if (!status) {
+                logger.info("**********Task does not belong to this user **********");
                 return false;
             }
-            Tag tag = tagRepository.findByTagId(Integer.valueOf(tagId));
+            Tag tag = tagRepository.findByTagId(Integer.parseInt(tagId));
             if (tag == null) {
                 logger.info("**********Tag does not exist **********");
                 return false;
@@ -134,30 +148,73 @@ public class TagService implements TagInterface {
                 logger.info("**********Tag does not belong to this user **********");
                 return false;
             }
-            // List<Integer> allTagsForTask =
-            // tagRepository.findTagByTaskId(Integer.valueOf(taskId));
-            // if (allTagsForTask.contains(Integer.valueOf(tagId))) {
-            // logger.info("**********Tag already exists for this task **********");
-            // return false;
-            // }
-            // if (allTagsForTask.size() >= 10) {
-            // logger.info("**********Maximum 10 tags can be added to a task **********");
-            // return false;
-            // }
-
-            // Task task = taskRepository.findByTaskId(Integer.valueOf(taskId));
-            // if (task == null) {
-            // logger.info("**********Task does not exist **********");
-            // return false;
-            // }
-            // tag.setAllTasks(task);
+            Task task = taskRepository.findByTaskId(Integer.parseInt(taskId));
+            if (task == null) {
+                logger.info("**********Task does not exist **********");
+                return false;
+            }
+            if (task.getTags() != null && task.getTags().length >= 10) {
+                logger.info("**********Tag limit reached **********");
+                return false;
+            }
+            if (task.getTags() != null) {
+                for (String t : task.getTags()) {
+                    if (t.equals(tag.getTag_Id().toString())) {
+                        logger.info("**********Tag already exists **********");
+                        return false;
+                    }
+                }
+            }
+            task.setTags(String.valueOf(tagId));
+            taskRepository.save(task);
             logger.info("**********Tag added to task successfully **********");
             return true;
-        } catch (Exception exception) {
+        } catch (
+
+        Exception exception) {
             logger.info("**********Exception while adding Tag to task **********");
             exception.printStackTrace();
             return false;
         }
+    }
+
+    @Override
+    public boolean deleteTagFromTask(String tagId, String taskId, String loggedInUser) {
+        User user = userRepository.findByEmailAddress(loggedInUser);
+        boolean status = getAllListForParticularUser(loggedInUser, Integer.parseInt(taskId));
+        if (!status) {
+            logger.info("**********Task does not belong to this user **********");
+            return false;
+        }
+        Tag tag = tagRepository.findByTagId(Integer.parseInt(tagId));
+        if (tag == null) {
+            logger.info("**********Tag does not exist **********");
+            return false;
+        }
+        if (tag.gettUsers().getUserId() != user.getUserId()) {
+            logger.info("**********Tag does not belong to this user **********");
+            return false;
+        }
+        Task task = taskRepository.findByTaskId(Integer.parseInt(taskId));
+        if (task == null) {
+            logger.info("**********Task does not exist **********");
+            return false;
+        }
+        if (task.getTags() != null) {
+            for (int i = 0; i < task.getTags().length; i++) {
+                if (task.getTags()[i].equals(tagId)) {
+                    ArrayUtils.remove(task.getTags(), i);
+                }
+
+                // this needs to be fixed
+            }
+            taskRepository.save(task);
+            logger.info("**********Tag deleted from task successfully **********");
+            return true;
+        }
+        logger.info("**********Tag does not exist **********");
+        return false;
+
     }
 
     private boolean getAllListForParticularUser(String loggedInUser, Integer taskId) {

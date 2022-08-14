@@ -19,6 +19,25 @@ public class Task {
     private short taskState;
     private Timestamp createdAtTime;
     private Timestamp updatedAtTime;
+    private String[] tags;
+
+    public String[] getTags() {
+        return tags;
+    }
+
+    public void setTags(String tagId) {
+        if (this.tags == null) {
+            this.tags = new String[1];
+            this.tags[0] = tagId;
+        } else {
+            String[] temp = new String[this.tags.length + 1];
+            for (int i = 0; i < this.tags.length; i++) {
+                temp[i] = this.tags[i];
+            }
+            temp[this.tags.length] = tagId;
+            this.tags = temp;
+        }
+    }
 
     @OneToMany(mappedBy = "mTasks", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)

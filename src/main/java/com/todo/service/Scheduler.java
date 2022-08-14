@@ -57,69 +57,70 @@ public class Scheduler {
         // Method
         // Cron Job runs every 2 hours
         // @Scheduled(cron = "0 0 */2 * * ?")
-        @Scheduled(fixedRate = 120000)
-        public void scheduleTask() {
-                try {
-                        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-                        LocalDate now = LocalDate.now();
-                        java.util.List<Reminder> allReminders = allReminders();
-                        List<Reminder> filteredReminders = new ArrayList<>();
-                        List<Task> allTasks = new ArrayList<>();
-                        List<Task> filteredTasks = new ArrayList<>();
-                        List<com.todo.model.List> allLists = new ArrayList<>();
-                        List<com.todo.model.List> filteredList = new ArrayList<>();
-                        List<com.todo.model.User> allUsers = new ArrayList<>();
-                        List<com.todo.model.User> filteredUser = new ArrayList<>();
+        // // @Scheduled(fixedRate = 120000)
+        // public void scheduleTask() {
+        // try {
+        // DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        // LocalDate now = LocalDate.now();
+        // java.util.List<Reminder> allReminders = allReminders();
+        // List<Reminder> filteredReminders = new ArrayList<>();
+        // List<Task> allTasks = new ArrayList<>();
+        // List<Task> filteredTasks = new ArrayList<>();
+        // List<com.todo.model.List> allLists = new ArrayList<>();
+        // List<com.todo.model.List> filteredList = new ArrayList<>();
+        // List<com.todo.model.User> allUsers = new ArrayList<>();
+        // List<com.todo.model.User> filteredUser = new ArrayList<>();
 
-                        for (Reminder reminder : allReminders) {
-                                LocalDateTime localDateTime = reminder.getReminderDateTime().toLocalDateTime();
-                                logger.info("Reminder date" + dtf.format(localDateTime));
+        // for (Reminder reminder : allReminders) {
+        // LocalDateTime localDateTime =
+        // reminder.getReminderDateTime().toLocalDateTime();
+        // logger.info("Reminder date" + dtf.format(localDateTime));
 
-                                logger.info("Today date" + now.toString());
-                                if (dtf.format(now).equals(dtf.format(localDateTime))) {
-                                        filteredReminders.add(reminder);
-                                }
-                        }
-                        if (filteredReminders.size() > 0) {
-                                allTasks = taskRepository.findAll();
-                        }
-                        for (Reminder reminder : filteredReminders) {
-                                if (allTasks.contains(reminder.getrTask())) {
-                                        filteredTasks.add(reminder.getrTask());
-                                }
-                        }
-                        if (filteredTasks.size() > 0) {
-                                allLists = listRepository.findAll();
-                        }
-                        for (Task task : filteredTasks) {
-                                if (allLists.contains(task.getmList())) {
-                                        filteredList.add(task.getmList());
-                                }
-                        }
-                        if (filteredList.size() > 0) {
-                                allUsers = userRepository.findAll();
-                        }
-                        for (com.todo.model.List list : filteredList) {
-                                if (allUsers.contains(list.getmUsers())) {
-                                        filteredUser.add(list.getmUsers());
-                                }
-                        }
-                        if (filteredTasks.size() == filteredUser.size()) {
-                                for (int i = 0; i < filteredReminders.size(); i++) {
-                                        try {
-                                                String content = filteredTasks.get(i).getTaskName();
-                                                String email = filteredUser.get(i).getEmailAddress();
-                                                sendEmail(content, email);
-                                                logger.info("Email sent to " + filteredUser.get(i).getEmailAddress());
-                                        } catch (MessagingException | IOException e) {
-                                                e.printStackTrace();
-                                        }
-                                }
-                        }
-                } catch (Exception e) {
-                        logger.error("Error in Scheduler", e);
-                }
-        }
+        // logger.info("Today date" + now.toString());
+        // if (dtf.format(now).equals(dtf.format(localDateTime))) {
+        // filteredReminders.add(reminder);
+        // }
+        // }
+        // if (filteredReminders.size() > 0) {
+        // allTasks = taskRepository.findAll();
+        // }
+        // for (Reminder reminder : filteredReminders) {
+        // if (allTasks.contains(reminder.getrTask())) {
+        // filteredTasks.add(reminder.getrTask());
+        // }
+        // }
+        // if (filteredTasks.size() > 0) {
+        // allLists = listRepository.findAll();
+        // }
+        // for (Task task : filteredTasks) {
+        // if (allLists.contains(task.getmList())) {
+        // filteredList.add(task.getmList());
+        // }
+        // }
+        // if (filteredList.size() > 0) {
+        // allUsers = userRepository.findAll();
+        // }
+        // for (com.todo.model.List list : filteredList) {
+        // if (allUsers.contains(list.getmUsers())) {
+        // filteredUser.add(list.getmUsers());
+        // }
+        // }
+        // if (filteredTasks.size() == filteredUser.size()) {
+        // for (int i = 0; i < filteredReminders.size(); i++) {
+        // try {
+        // String content = filteredTasks.get(i).getTaskName();
+        // String email = filteredUser.get(i).getEmailAddress();
+        // sendEmail(content, email);
+        // logger.info("Email sent to " + filteredUser.get(i).getEmailAddress());
+        // } catch (MessagingException | IOException e) {
+        // e.printStackTrace();
+        // }
+        // }
+        // }
+        // } catch (Exception e) {
+        // logger.error("Error in Scheduler", e);
+        // }
+        // }
 
         private List<Reminder> allReminders() {
                 return reminderRepository.findAll();

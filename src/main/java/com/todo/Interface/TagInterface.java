@@ -14,4 +14,6 @@ public interface TagInterface {
     boolean deleteTag(Integer tagId, String loggedInUser);
 
     boolean taskTag(String tagId, String taskId, String loggedInUser);
+
+    boolean deleteTagFromTask(String tagId, String taskId, String loggedInUser);
 }
