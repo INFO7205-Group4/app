@@ -5,6 +5,8 @@ import com.todo.Interface.NeedLogin;
 import com.todo.Interface.TagInterface;
 import com.todo.model.Tag;
 import java.util.List;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +34,7 @@ public class TagController {
     @RequestMapping(value = "/tag", method = RequestMethod.POST, produces = "application/json")
     public ResponseEntity<Tag> createTag(HttpServletRequest request, @RequestBody Tag newTag) {
         try {
-            if(newTag.getTag_Name().equals(null) || newTag.getTag_Name().equals("")){
+            if (newTag.getTagName().equals(null) || newTag.getTagName().equals("")) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
             }
             String loggedInUser = AuthService.getUserName(request);
@@ -83,15 +85,39 @@ public class TagController {
 
     @NeedLogin
     @RequestMapping(value = "/deleteTag", method = RequestMethod.DELETE, produces = "application/json")
-    public ResponseEntity<Tag> deleteTag(@RequestParam("tag_Id") Integer tagId) {
+    public ResponseEntity<Tag> deleteTag(HttpServletRequest request, @RequestParam("tag_Id") Integer tagId) {
         try {
-            boolean status = tagInterface.deleteTag(tagId);
+            String loggedInUser = AuthService.getUserName(request);
+            boolean status = tagInterface.deleteTag(tagId, loggedInUser);
             if (status) {
                 return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
             }
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         } catch (Exception e) {
             logger.info("**********Exception while deleting List**********");
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+    }
+
+    @NeedLogin
+    @RequestMapping(value = "/tagTask", method = RequestMethod.POST, produces = "application/json")
+    public ResponseEntity<Tag> attachTagToTask(HttpServletRequest request, @RequestBody Map<String, String> taskData) {
+        try {
+            if (taskData.get("taskId") == null || taskData.get("taskId").isEmpty()
+                    || taskData.get("taskId").isBlank()) {
+                logger.info("**********Task Name is Required**********");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            }
+            String loggedInUser = AuthService.getUserName(request);
+            boolean status = tagInterface.taskTag(taskData.get("tagId"), taskData.get("taskId"), loggedInUser);
+            if (status) {
+                return ResponseEntity.status(HttpStatus.CREATED).body(null);
+            }
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+
+        } catch (Exception e) {
+            logger.info("**********Exception while creating New Tag**********");
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }

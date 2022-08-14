@@ -11,5 +11,7 @@ public interface TagInterface {
 
     Tag updateTag(Tag updatedTag, String loggedInUser);
 
-    boolean deleteTag(Integer tagId);
+    boolean deleteTag(Integer tagId, String loggedInUser);
+
+    boolean taskTag(String tagId, String taskId, String loggedInUser);
 }

@@ -10,12 +10,12 @@ public interface TagRepository extends JpaRepository<Tag, Integer> {
     @Query("select t from Tag t where t.tUsers.userId=?1")
     List<Tag> findTagByUserId(Integer UserId);
 
-    @Query("select t.tag_Name from Tag t where t.tUsers.userId=?1")
+    @Query("select t.tagName from Tag t where t.tUsers.userId=?1")
     List<String> findTagNameByUserId(Integer UserId);
 
     @Query("select t from Tag t where t.tag_Id=?1")
     Tag findByTagId(Integer tag_id);
 
-//    @Query("select t from Tag t where t.tTaskTags.task_Id=?1")
-//    List<Tag> findTagByTaskId(Integer taskId);
+    // @Query("from Tag t join t.tasks r where r.task_Id=?1")
+    // java.util.List<Integer> findTagByTaskId(Integer taskId);
 }

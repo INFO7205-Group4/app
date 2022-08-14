@@ -12,25 +12,25 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="Tag")
+@Table(name = "Tag")
 public class Tag {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer tag_Id;
 
-    private String tag_Name;
+    private String tagName;
 
-    private Timestamp created_AtTime;
+    private Timestamp createdAtTime;
 
-    private Timestamp updated_AtTime;
+    private Timestamp updatedAtTime;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name="userId",nullable=false)
+    @JoinColumn(name = "userId", nullable = false)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private User tUsers;
 
-    public Tag(){
+    public Tag() {
 
     }
 
@@ -42,28 +42,28 @@ public class Tag {
         this.tag_Id = tag_Id;
     }
 
-    public String getTag_Name() {
-        return tag_Name;
+    public String getTagName() {
+        return tagName;
     }
 
-    public void setTag_Name(String tag_Name) {
-        this.tag_Name = tag_Name;
+    public void setTagName(String tagName) {
+        this.tagName = tagName;
     }
 
-    public Timestamp getCreated_AtTime() {
-        return created_AtTime;
+    public Timestamp getCreatedAtTime() {
+        return createdAtTime;
     }
 
-    public void setCreated_AtTime(Timestamp created_AtTime) {
-        this.created_AtTime = created_AtTime;
+    public void setCreatedAtTime(Timestamp createdAtTime) {
+        this.createdAtTime = createdAtTime;
     }
 
-    public Timestamp getUpdated_AtTime() {
-        return updated_AtTime;
+    public Timestamp getUpdatedAtTime() {
+        return updatedAtTime;
     }
 
-    public void setUpdated_AtTime(Timestamp updated_AtTime) {
-        this.updated_AtTime = updated_AtTime;
+    public void setUpdatedAtTime(Timestamp updatedAtTime) {
+        this.updatedAtTime = updatedAtTime;
     }
 
     public User gettUsers() {
@@ -73,4 +73,11 @@ public class Tag {
     public void settUsers(User tUsers) {
         this.tUsers = tUsers;
     }
+
+    // @ManyToMany(fetch = FetchType.LAZY)
+    // @JoinTable(name = "Task", joinColumns = @JoinColumn(name = "tag_Id"),
+    // inverseJoinColumns = @JoinColumn(name = "task_Id"))
+
+    // public Set<Task> tasks;
+
 }

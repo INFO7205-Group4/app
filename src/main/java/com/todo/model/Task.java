@@ -120,4 +120,9 @@ public class Task {
     public void setAttachment(Set<Attachment> attachments) {
         this.attachments = attachments;
     }
+
+    // @ManyToMany(fetch = FetchType.LAZY)
+    // @JoinTable(name = "Tag", joinColumns = @JoinColumn(name = "task_Id"),
+    // inverseJoinColumns = @JoinColumn(name = "tag_Id"))
+    // public Set<Tag> tags;
 }
